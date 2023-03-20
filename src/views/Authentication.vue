@@ -59,6 +59,7 @@ export default {
                     // IdP data available using getAdditionalUserInfo(result)
                     // ...
                     state.authenticated = true;
+                    router.push('/tabs/tab1')
                 }).catch((error) => {
                     // Handle Errors here.
                     const errorCode = error.code;
