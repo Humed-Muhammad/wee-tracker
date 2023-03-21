@@ -1,24 +1,28 @@
 <template>
-  <div id="container">
-    <strong>{{ name }}</strong>
-    <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-fab id="addIcon">
+    <ion-fab-button id="open-modal">
+      <ion-icon :icon="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <Modal />
 </template>
 
 <script setup lang="ts">
+import { add } from 'ionicons/icons';
+import Modal from './Modal.vue';
 defineProps({
   name: String,
 });
+
+
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
+#addIcon {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 83%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #container strong {
