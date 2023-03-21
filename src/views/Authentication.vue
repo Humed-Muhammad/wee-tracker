@@ -8,18 +8,17 @@ import {
     IonContent,
     IonCard,
     IonCardSubtitle,
-    // IonCardTitle,
     IonCardHeader,
     IonCardContent,
     IonButton,
     IonIcon,
-    IonText
 } from "@ionic/vue";
 import { reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { provider } from "@/utils"
+import { getAuth, signInWithPopup } from "firebase/auth";
+import { db, provider } from "@/utils"
 import { logoGoogle } from 'ionicons/icons';
+import { addDoc, collection, serverTimestamp } from "@firebase/firestore";
 
 export default {
     name: "SignIn",
@@ -36,7 +35,6 @@ export default {
         IonCardContent,
         IonButton,
         IonIcon,
-        IonText
     },
     setup() {
         const router = useRouter();
@@ -50,25 +48,21 @@ export default {
 
             const auth = getAuth();
             signInWithPopup(auth, provider)
-                .then((result) => {
-                    // This gives you a Google Access Token. You can use it to access the Google API.
-                    const credential = GoogleAuthProvider.credentialFromResult(result);
-                    const token = credential?.accessToken;
-                    // The signed-in user info.
+                .then(async (result) => {
+
                     const user = result.user;
-                    // IdP data available using getAdditionalUserInfo(result)
-                    // ...
+
                     state.authenticated = true;
-                    router.push('/tabs/tab1')
+                    await addDoc(collection(db, "users"), {
+                        uid: user?.uid,
+                        email: user?.email,
+                        createdAt: serverTimestamp(),
+                        fullName: user?.displayName,
+                        phoneNumber: user?.phoneNumber
+                    });
+                    router.push('/')
                 }).catch((error) => {
-                    // Handle Errors here.
-                    const errorCode = error.code;
                     state.errorMsg = error.message;
-                    // The email of the user's account used.
-                    const email = error.customData.email;
-                    // The AuthCredential type that was used.
-                    const credential = GoogleAuthProvider.credentialFromError(error);
-                    // ...
                 });
         };
 
@@ -106,7 +100,7 @@ export default {
                         <ion-icon expand="block" slot="start" :icon="logoGoogle"></ion-icon>
                         Sign In
                     </ion-button>
-                    <ion-text>{{ authenticated ? "User Authenticated" : "User UnAuthenticated" }}</ion-text>
+
                 </ion-card-content>
             </ion-card>
         </ion-content>
