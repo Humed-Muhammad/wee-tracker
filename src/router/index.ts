@@ -13,32 +13,35 @@ const guard = (
   next: NavigationGuardNext
 ) => {
   try {
-    if (auth.currentUser?.uid) {
-      next();
-    } else {
-      next("/");
-    }
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        next();
+      } else {
+        next("/auth");
+      }
+    });
   } catch (error) {
-    next("/");
+    next("/auth");
   }
 };
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
+    path: "/auth",
     component: () => import("@/views/Authentication.vue"),
+    // beforeEnter: guard,
   },
   {
-    path: "/tabs/",
+    path: "/",
     component: Tabs,
     children: [
       {
         path: "",
-        redirect: "/tabs/tab1",
+        redirect: "/tab1",
       },
       {
         path: "tab1",
-        component: () => import("@/views/Tab1Page.vue"),
+        component: () => import("@/views/HomePage.vue"),
         beforeEnter: guard,
       },
       {
