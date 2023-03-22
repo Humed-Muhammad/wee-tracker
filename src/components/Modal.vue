@@ -1,30 +1,52 @@
 <template>
-    <ion-modal ref="modal" trigger="open-modal" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5, 0.75]">
+    <ion-modal ref="modal" trigger="open-modal" id="modal" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5, 0.75]">
         <ion-content class="ion-padding">
-            <div class="ion-margin-top">
-                <ion-label>Add your wee data</ion-label>
+            <form @submit="handleSubmit" class="ion-margin-top">
+                <strong>Add your wee data</strong>
                 <ion-list>
-                    <ion-item>
-                        <ion-label position="floating" color="gray">Wee amount</ion-label>
-                        <ion-input v-model="state.weeML" type="number" placeholder="Wee in ml"></ion-input>
-                        <ion-note slot="error">Required</ion-note>
-                    </ion-item>
+                    <div id="#container">
+                        <ion-item>
+                            <ion-label>Wee Measurement</ion-label>
+                            <ion-select interface="popover" name="weeMeasurement" v-model="state.weeMeasurement"
+                                placeholder="Select Wee Measurement">
+                                <ion-select-option value="ML">ML</ion-select-option>
+                                <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
+                            </ion-select>
+                            <error-message name="weeMeasurement" />
+                        </ion-item>
+                        <ion-item>
+                            <ion-label>Wee amount</ion-label>
+                            <ion-input name="weeML" clearInput autofocus v-model="state.weeML" type="number"
+                                placeholder="Add your wee here"></ion-input>
+                            <error-message name="weeML" />
+                        </ion-item>
+                    </div>
                     <ion-item class="ion-margin-top">
-                        <ion-datetime v-model="state.weeTime"></ion-datetime>
+                        <ion-datetime name="weeTime" v-model="state.weeTime"></ion-datetime>
+                        <error-message name="weeTime" />
+
                     </ion-item>
                     <ion-item>
-                        <ion-button v-if="!state.creatingDoc" @click="handleSubmit" type="button"
-                            size="large">Submit</ion-button>
-                        <ion-spinner v-else name="crescent"></ion-spinner>
+                        <ion-label>Urgency</ion-label>
+                        <ion-toggle v-model="state.urgency" />
+                    </ion-item>
+                    <ion-item>
+                        <ion-label>Incontinence</ion-label>
+                        <ion-toggle v-model="state.incontinence" />
                     </ion-item>
                 </ion-list>
-            </div>
+                <div id="buttonContainer">
+                    <ion-button v-if="!state.creatingDoc" type="submit" size="default">Submit</ion-button>
+                    <ion-spinner v-else name="crescent">Submitting</ion-spinner>
+                </div>
+            </form>
         </ion-content>
     </ion-modal>
 </template>
   
 <script lang="ts">
 import { db, auth } from '@/utils';
+import { weeSchema } from '@/utils/validationSchemas';
 import {
     IonModal,
     IonContent,
@@ -32,16 +54,20 @@ import {
     IonList,
     IonLabel,
     IonDatetime,
-    IonNote,
     IonInput,
     IonButton,
     IonSpinner,
-    toastController
+    toastController,
+    IonSelect,
+    IonSelectOption,
+    IonToggle,
+
 } from '@ionic/vue';
 import { defineComponent, reactive } from 'vue';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { checkmark } from 'ionicons/icons';
 import { Color } from '@ionic/core';
+import { ErrorMessage, useForm } from 'vee-validate';
 
 export default defineComponent({
     name: "WeeModal",
@@ -51,17 +77,24 @@ export default defineComponent({
         IonItem,
         IonList,
         IonLabel,
-        IonNote,
         IonInput,
         IonDatetime,
         IonButton,
-        IonSpinner
+        IonSpinner,
+        IonSelect,
+        IonSelectOption,
+        IonToggle,
+        ErrorMessage,
+
     },
     setup() {
         const state = reactive({
-            weeML: 0,
+            weeMeasurement: '',
+            weeML: undefined,
             weeTime: "",
-            creatingDoc: false
+            creatingDoc: false,
+            urgency: false,
+            incontinence: false
         });
 
         const presentToast = async (message: string, color: Color) => {
@@ -84,6 +117,9 @@ export default defineComponent({
                     uid: auth?.currentUser?.uid,
                     weeTime: state.weeTime,
                     weeML: state.weeML,
+                    weeMeasurement: state.weeMeasurement,
+                    incontinence: state.incontinence,
+                    urgency: state.urgency,
                     createdAt: serverTimestamp(),
 
                 });
@@ -99,10 +135,33 @@ export default defineComponent({
             }
         }
 
+
+        useForm({
+            initialValues: state,
+            validateOnMount: false,
+            validationSchema: weeSchema,
+        });
         return {
             state,
-            handleSubmit
+            handleSubmit,
+
         };
     }
 });
 </script>
+
+<style scoped>
+#container {
+    display: flex;
+}
+
+#modal {
+    overflow-y: auto;
+}
+
+#buttonContainer {
+    widows: 100%;
+    display: flex;
+    justify-content: center;
+}
+</style>

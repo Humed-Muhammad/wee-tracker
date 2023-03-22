@@ -14,7 +14,7 @@
       <div id="container">
         <ion-button @click="logOut">Logout</ion-button>
       </div>
-      <!-- <ExploreContainer name="Tab 3 page" /> -->
+
     </ion-content>
   </ion-page>
 </template>
