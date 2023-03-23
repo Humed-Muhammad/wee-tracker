@@ -1,45 +1,47 @@
 <template>
     <ion-modal ref="modal" trigger="open-modal" id="modal" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5, 0.75]">
         <ion-content class="ion-padding">
-            <form @submit="handleSubmit" class="ion-margin-top">
+            <validation-form v-slot="state" @submit="handleSubmit" class="ion-margin-top">
                 <strong>Add your wee data</strong>
                 <ion-list>
                     <div id="#container">
                         <ion-item>
                             <ion-label>Wee Measurement</ion-label>
-                            <ion-select interface="popover" name="weeMeasurement" v-model="state.weeMeasurement"
+                            <ion-select interface="popover" name="weeMeasurement" v-model="state.values.weeMeasurement"
                                 placeholder="Select Wee Measurement">
                                 <ion-select-option value="ML">ML</ion-select-option>
                                 <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
                             </ion-select>
                             <error-message name="weeMeasurement" />
                         </ion-item>
-                        <ion-item>
-                            <ion-label>Wee amount</ion-label>
-                            <ion-input name="weeML" clearInput autofocus v-model="state.weeML" type="number"
+                        <ion-label>Wee amount</ion-label>
+                        <field name="weeML" type="number">
+
+                            <ion-input name="weeML" clearInput autofocus v-model="state.values.weeML" type="number"
                                 placeholder="Add your wee here"></ion-input>
-                            <error-message name="weeML" />
-                        </ion-item>
+                        </field>
+                        <error-message name="weeML" />
+
                     </div>
                     <ion-item class="ion-margin-top">
-                        <ion-datetime name="weeTime" v-model="state.weeTime"></ion-datetime>
+                        <ion-datetime name="weeTime" v-model="state.values.weeTime"></ion-datetime>
                         <error-message name="weeTime" />
 
                     </ion-item>
                     <ion-item>
                         <ion-label>Urgency</ion-label>
-                        <ion-toggle v-model="state.urgency" />
+                        <ion-toggle v-model="state.values.urgency" />
                     </ion-item>
                     <ion-item>
                         <ion-label>Incontinence</ion-label>
-                        <ion-toggle v-model="state.incontinence" />
+                        <ion-toggle v-model="state.values.incontinence" />
                     </ion-item>
                 </ion-list>
                 <div id="buttonContainer">
-                    <ion-button v-if="!state.creatingDoc" type="submit" size="default">Submit</ion-button>
+                    <ion-button v-if="!state.values.creatingDoc" type="submit" size="default">Submit</ion-button>
                     <ion-spinner v-else name="crescent">Submitting</ion-spinner>
                 </div>
-            </form>
+            </validation-form>
         </ion-content>
     </ion-modal>
 </template>
@@ -67,7 +69,7 @@ import { defineComponent, reactive } from 'vue';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { checkmark } from 'ionicons/icons';
 import { Color } from '@ionic/core';
-import { ErrorMessage, useForm } from 'vee-validate';
+import { ErrorMessage, useForm, Field, Form as ValidationForm } from 'vee-validate';
 
 export default defineComponent({
     name: "WeeModal",
@@ -85,7 +87,8 @@ export default defineComponent({
         IonSelectOption,
         IonToggle,
         ErrorMessage,
-
+        ValidationForm,
+        Field,
     },
     setup() {
         const state = reactive({
@@ -140,11 +143,12 @@ export default defineComponent({
             initialValues: state,
             validateOnMount: false,
             validationSchema: weeSchema,
+
         });
         return {
             state,
             handleSubmit,
-
+            ValidationForm
         };
     }
 });
