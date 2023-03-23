@@ -8,24 +8,23 @@
                         <ion-item>
                             <ion-label>Wee Measurement</ion-label>
                             <ion-select interface="popover" name="weeMeasurement" v-model="state.values.weeMeasurement"
-                                placeholder="Select Wee Measurement">
+                                placeholder="Select Wee Measurement" aria-required="true">
                                 <ion-select-option value="ML">ML</ion-select-option>
                                 <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
                             </ion-select>
-                            <error-message name="weeMeasurement" />
+
                         </ion-item>
-                        <ion-label>Wee amount</ion-label>
-                        <field name="weeML" type="number">
-
+                        <ion-item>
+                            <ion-label>Wee amount</ion-label>
                             <ion-input name="weeML" clearInput autofocus v-model="state.values.weeML" type="number"
-                                placeholder="Add your wee here"></ion-input>
-                        </field>
-                        <error-message name="weeML" />
+                                placeholder="Add your wee here" required></ion-input>
 
+
+                        </ion-item>
                     </div>
                     <ion-item class="ion-margin-top">
-                        <ion-datetime name="weeTime" v-model="state.values.weeTime"></ion-datetime>
-                        <error-message name="weeTime" />
+                        <ion-datetime name="weeTime" aria-required="true" v-model="state.values.weeTime"></ion-datetime>
+
 
                     </ion-item>
                     <ion-item>
@@ -69,7 +68,7 @@ import { defineComponent, reactive } from 'vue';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { checkmark } from 'ionicons/icons';
 import { Color } from '@ionic/core';
-import { ErrorMessage, useForm, Field, Form as ValidationForm } from 'vee-validate';
+import { useForm, Form as ValidationForm } from 'vee-validate';
 
 export default defineComponent({
     name: "WeeModal",
@@ -86,9 +85,7 @@ export default defineComponent({
         IonSelect,
         IonSelectOption,
         IonToggle,
-        ErrorMessage,
         ValidationForm,
-        Field,
     },
     setup() {
         const state = reactive({
