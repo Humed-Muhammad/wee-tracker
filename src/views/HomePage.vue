@@ -26,9 +26,12 @@
             <ion-text class="averageText">245ml</ion-text>
           </div>
           <div class="dailyContainer">
-            <ion-text class="averageText">45</ion-text>
-            <span>ml</span>
 
+            <ion-text v-for="(item, index) in state.lastSevenDays" :key="index" class="averageText">
+              <p>{{ getDay(new Date(item?.weeTime)) }}</p>
+              <p class="weeClass">{{ item?.weeML || 0 }}</p>
+              <p>{{ item?.weeMeasurement || "ML" }}</p>
+            </ion-text>
           </div>
         </ion-card-content>
       </ion-card>
@@ -38,40 +41,29 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonItem, IonText } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonCard, IonCardHeader, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
 import { reactive } from 'vue';
-import { collection, DocumentData, getDoc, getDocs, orderBy, query, where } from '@firebase/firestore';
-import { auth, db } from '@/utils';
-import { formatISO, endOfDay } from "date-fns"
-import {ILastSevenDaysData} from "@/types"
 
-interface IState {
-  lastSevenDays: ILastSevenDaysData[] | undefined|DocumentData,
-  sevenDaysAverage: number | undefined,
-}
+import { getDay } from "date-fns"
+import { IHomeState } from "@/types"
+import { getLastWeekWeeData } from "@/utils/helpers"
 
-const state = reactive<IState>({
+
+const state = reactive<IHomeState>({
   lastSevenDays: [],
   sevenDaysAverage: undefined
 })
 
-const weeRef = collection(db, "wees");
+getLastWeekWeeData(state)
 
-const userWeesQuery = query(weeRef, orderBy("weeTime"), where("weeTime", "<=", formatISO(endOfDay(new Date()))));
-const querySnapshot = getDocs(userWeesQuery).then(data => {
-
-  data.forEach((doc) => {
-    
-    state.lastSevenDays?.push(doc.data());
-  });
-});
 </script>
 
 <style scoped>
 .averageText {
   color: darkcyan;
   margin: 2px;
+  text-align: center;
 }
 
 .cardContent {
@@ -81,7 +73,7 @@ const querySnapshot = getDocs(userWeesQuery).then(data => {
 
 .dailyContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   line-height: 1;
 }
 </style>
