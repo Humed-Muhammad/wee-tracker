@@ -1,46 +1,46 @@
 <template>
     <ion-modal ref="modal" trigger="open-modal" id="modal" :initial-breakpoint="0.25" :breakpoints="[0, 0.25, 0.5, 0.75]">
         <ion-content class="ion-padding">
-            <validation-form v-slot="state" @submit="handleSubmit" class="ion-margin-top">
-                <strong>Add your wee data</strong>
-                <ion-list>
-                    <div id="#container">
-                        <ion-item>
-                            <ion-label>Wee Measurement</ion-label>
-                            <ion-select interface="popover" name="weeMeasurement" v-model="state.values.weeMeasurement"
-                                placeholder="Select Wee Measurement" aria-required="true">
-                                <ion-select-option value="ML">ML</ion-select-option>
-                                <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
-                            </ion-select>
 
-                        </ion-item>
-                        <ion-item>
-                            <ion-label>Wee amount</ion-label>
-                            <ion-input name="weeML" clearInput autofocus v-model="state.values.weeML" type="number"
-                                placeholder="Add your wee here" required></ion-input>
-
-
-                        </ion-item>
-                    </div>
-                    <ion-item class="ion-margin-top">
-                        <ion-datetime name="weeTime" aria-required="true" v-model="state.values.weeTime"></ion-datetime>
-
+            <strong>Add your wee data</strong>
+            <ion-list>
+                <div id="#container">
+                    <ion-item>
+                        <ion-label>Wee Measurement</ion-label>
+                        <ion-select interface="popover" name="weeMeasurement" v-model="state.weeMeasurement"
+                            placeholder="Select Wee Measurement" aria-required="true">
+                            <ion-select-option value="ML">ML</ion-select-option>
+                            <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
+                        </ion-select>
 
                     </ion-item>
                     <ion-item>
-                        <ion-label>Urgency</ion-label>
-                        <ion-toggle v-model="state.values.urgency" />
+                        <ion-label>Wee amount</ion-label>
+                        <ion-input name="weeML" clearInput autofocus v-model="state.weeML" type="number"
+                            placeholder="Add your wee here" required></ion-input>
+
+
                     </ion-item>
-                    <ion-item>
-                        <ion-label>Incontinence</ion-label>
-                        <ion-toggle v-model="state.values.incontinence" />
-                    </ion-item>
-                </ion-list>
-                <div id="buttonContainer">
-                    <ion-button v-if="!state.values.creatingDoc" type="submit" size="default">Submit</ion-button>
-                    <ion-spinner v-else name="crescent">Submitting</ion-spinner>
                 </div>
-            </validation-form>
+                <ion-item class="ion-margin-top">
+                    <ion-datetime name="weeTime" aria-required="true" v-model="state.weeTime"></ion-datetime>
+
+
+                </ion-item>
+                <ion-item>
+                    <ion-label>Urgency</ion-label>
+                    <ion-toggle v-model="state.urgency" />
+                </ion-item>
+                <ion-item>
+                    <ion-label>Incontinence</ion-label>
+                    <ion-toggle v-model="state.incontinence" />
+                </ion-item>
+            </ion-list>
+            <div id="buttonContainer">
+                <ion-button v-if="!state.creatingDoc" @click="handleSubmit" size="default">Submit</ion-button>
+                <ion-spinner v-else name="crescent">Submitting</ion-spinner>
+            </div>
+
         </ion-content>
     </ion-modal>
 </template>
@@ -58,17 +58,15 @@ import {
     IonInput,
     IonButton,
     IonSpinner,
-    toastController,
     IonSelect,
     IonSelectOption,
     IonToggle,
-
 } from '@ionic/vue';
 import { defineComponent, reactive } from 'vue';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { checkmark } from 'ionicons/icons';
-import { Color } from '@ionic/core';
 import { useForm, Form as ValidationForm } from 'vee-validate';
+import { format, parseISO } from 'date-fns';
+import { presentToast } from '@/utils/helpers';
 
 export default defineComponent({
     name: "WeeModal",
@@ -85,7 +83,7 @@ export default defineComponent({
         IonSelect,
         IonSelectOption,
         IonToggle,
-        ValidationForm,
+        // ValidationForm,
     },
     setup() {
         const state = reactive({
@@ -97,25 +95,17 @@ export default defineComponent({
             incontinence: false
         });
 
-        const presentToast = async (message: string, color: Color) => {
-            const toast = await toastController.create({
-                message,
-                duration: 1500,
-                icon: checkmark,
-                color
-            });
-
-            await toast.present();
-        }
 
 
         const handleSubmit = async () => {
             try {
-
                 state.creatingDoc = true;
                 const docRef = await addDoc(collection(db, "wees"), {
                     uid: auth?.currentUser?.uid,
-                    weeTime: state.weeTime,
+                    weeTime: {
+                        date: format(parseISO(state.weeTime), "PP"),
+                        time: format(parseISO(state.weeTime), "p")
+                    },
                     weeML: state.weeML,
                     weeMeasurement: state.weeMeasurement,
                     incontinence: state.incontinence,
