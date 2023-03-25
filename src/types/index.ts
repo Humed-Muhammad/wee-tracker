@@ -9,9 +9,11 @@ export interface IAddWeeData {
   incontinence: boolean;
 }
 
-export type ILastSevenDaysData = Omit<IAddWeeData, "creatingDoc">;
+export type IWeeDuringDaysData = Omit<IAddWeeData, "creatingDoc">;
 
 export interface IHomeState {
-  lastSevenDays: ILastSevenDaysData[] | undefined | DocumentData;
-  sevenDaysAverage: number | undefined;
+  weesDuringDay: IWeeDuringDaysData[] | undefined | DocumentData;
+  averageWeeDuringDay: number | undefined;
+  currentDate: Date;
+  fetchingWees: boolean;
 }
