@@ -18,7 +18,7 @@ import { useRouter } from "vue-router";
 import { getAuth, signInWithPopup } from "firebase/auth";
 import { db, provider } from "@/utils"
 import { logoGoogle } from 'ionicons/icons';
-import { addDoc, collection, serverTimestamp } from "@firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "@firebase/firestore";
 
 export default {
     name: "SignIn",
@@ -52,14 +52,18 @@ export default {
 
                     const user = result.user;
 
-                    state.authenticated = true;
-                    await addDoc(collection(db, "users"), {
+                    const data = {
                         uid: user?.uid,
                         email: user?.email,
                         createdAt: serverTimestamp(),
                         fullName: user?.displayName,
-                        phoneNumber: user?.phoneNumber
-                    });
+                        phoneNumber: user?.phoneNumber,
+                        weeMeasurement: "",
+                    }
+                    state.authenticated = true;
+
+                    await setDoc(doc(db, "users", user?.uid), data);
+
                     router.push('/')
                 }).catch((error) => {
                     state.errorMsg = error.message;
