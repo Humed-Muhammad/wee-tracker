@@ -1,4 +1,4 @@
-import { IHomeState, IWeeDuringDaysData } from "@/types";
+import { IHomeState, IUser, IWeeDuringDaysData } from "@/types";
 import { toastController } from "@ionic/vue";
 import { mean } from "lodash";
 import {
@@ -12,6 +12,7 @@ import { warning } from "ionicons/icons";
 import { Color } from "@ionic/core";
 
 const weeRef = collection(db, "wees");
+const userRef = collection(db, "users");
 
 export const getWeesByDay = (state: IHomeState) => {
   state.fetchingWees = true;
@@ -31,6 +32,7 @@ export const getWeesByDay = (state: IHomeState) => {
     .catch((err) => {
       presentToast("Error during fetching", "warning", warning);
       state.fetchingWees = false;
+      console.log(err);
     });
 };
 
@@ -57,5 +59,21 @@ export const calculateWeeAverage = (state: IHomeState) => {
   const weeML = state.weesDuringDay?.map((item: IWeeDuringDaysData) =>
     Number(item.weeML)
   );
-  state.averageWeeDuringDay = mean(weeML);
+  state.averageWeeDuringDay = mean(weeML) || 0;
+};
+
+export const getUSerData = async (state: IUser) => {
+  const userQuery = query(userRef, where("uid", "==", auth.currentUser?.uid));
+
+  await getDocs(userQuery)
+    .then((data) => {
+      data.forEach((doc) => {
+        state.user = doc.data();
+      });
+    })
+    .catch((err) => {
+      presentToast("Error during fetching", "warning", warning);
+
+      console.log(err);
+    });
 };

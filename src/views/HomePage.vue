@@ -2,14 +2,10 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <!-- <ion-title>Home</ion-title> -->
         <ion-segment value="Wee">
           <ion-segment-button value="Wee">
             <ion-label>Wee</ion-label>
           </ion-segment-button>
-          <!-- <ion-segment-button value="Fluid">
-            <ion-label>Fluid</ion-label>
-          </ion-segment-button> -->
         </ion-segment>
       </ion-toolbar>
     </ion-header>
@@ -25,29 +21,14 @@
         <ion-text>{{ getMonthAndDay(state.currentDate) }}</ion-text>
         <ion-icon @click="handleAddDays" class="fabButton" :icon="chevronForwardOutline"></ion-icon>
       </div>
-      <!-- <ion-card> -->
 
-      <!-- <ion-card-content class="cardContent"> -->
-      <!-- <div>
-            <ion-card-subtitle>Average</ion-card-subtitle>
-            <ion-text class="averageText">245ml</ion-text>
-          </div> -->
-      <!-- <div class="dailyContainer">
-
-            <ion-text v-for="(item, index) in state.lastSevenDays" :key="index" class="averageText">
-              <p>{{ getDay(new Date(item?.weeTime)) }}</p>
-              <p class="weeClass">{{ item?.weeML || 0 }}</p>
-              <p>{{ item?.weeMeasurement || "ML" }}</p>
-            </ion-text>
-          </div> -->
-      <!-- </ion-card-content> -->
-      <!-- </ion-card> -->
       <div class="container flex-col">
         <ion-text class="averageText">Average</ion-text>
         <div class="container outerCircle">
 
           <div class="dailyAverageCircle container">
-            <ion-text v-if="!state.fetchingWees" class="">{{ state.averageWeeDuringDay }}</ion-text>
+            <ion-text v-if="!state.fetchingWees" class="lg">{{ state.averageWeeDuringDay }} {{
+              storeState?.user?.weeMeasurement }}</ion-text>
             <ion-spinner v-else name="crescent" />
           </div>
         </div>
@@ -66,7 +47,7 @@ import { reactive } from 'vue';
 import { IHomeState } from "@/types"
 import { getMonthAndDay, getWeesByDay } from "@/utils/helpers"
 import { addDays, subDays } from 'date-fns';
-
+import { storeState } from "@/store"
 
 const state = reactive<IHomeState>({
   weesDuringDay: [],
@@ -76,6 +57,8 @@ const state = reactive<IHomeState>({
 })
 
 getWeesByDay(state)
+
+storeState.fetchUserData()
 
 const handleAddDays = () => {
   state.currentDate = addDays(state.currentDate, 1)
@@ -168,5 +151,13 @@ const handleSubDays = () => {
   height: 120px;
   width: 120px;
   margin-top: 15px;
+}
+
+.lg {
+  font-size: larger;
+}
+
+.xl {
+  font-size: x-large;
 }
 </style>
