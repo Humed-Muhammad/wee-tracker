@@ -5,15 +5,7 @@
             <strong>Add your wee data</strong>
             <ion-list>
                 <div id="#container">
-                    <ion-item>
-                        <ion-label>Wee Measurement</ion-label>
-                        <ion-select interface="popover" name="weeMeasurement" v-model="state.weeMeasurement"
-                            placeholder="Select Wee Measurement" aria-required="true">
-                            <ion-select-option value="ML">ML</ion-select-option>
-                            <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
-                        </ion-select>
 
-                    </ion-item>
                     <ion-item>
                         <ion-label>Wee amount</ion-label>
                         <ion-input name="weeML" clearInput autofocus v-model="state.weeML" type="number"
@@ -58,8 +50,6 @@ import {
     IonInput,
     IonButton,
     IonSpinner,
-    IonSelect,
-    IonSelectOption,
     IonToggle,
 } from '@ionic/vue';
 import { defineComponent, reactive } from 'vue';
@@ -80,10 +70,7 @@ export default defineComponent({
         IonDatetime,
         IonButton,
         IonSpinner,
-        IonSelect,
-        IonSelectOption,
         IonToggle,
-        // ValidationForm,
     },
     setup() {
         const state = reactive({
