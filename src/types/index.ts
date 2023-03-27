@@ -17,3 +17,17 @@ export interface IHomeState {
   currentDate: Date;
   fetchingWees: boolean;
 }
+
+export interface IUserInfo {
+  weeMeasurement: string;
+  createdAt?: { seconds: number; nanoseconds: number };
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  uid: string;
+}
+
+export interface IUser {
+  user: IUserInfo | DocumentData;
+  fetchUserData: () => void;
+}
