@@ -17,9 +17,9 @@
       </ion-card-header>
 
       <div class="chevronContainer">
-        <ion-icon @click="handleSubDays" class="fabButton" :icon="chevronBackOutline"></ion-icon>
-        <ion-text>{{ getMonthAndDay(state.currentDate) }}</ion-text>
-        <ion-icon @click="handleAddDays" class="fabButton" :icon="chevronForwardOutline"></ion-icon>
+        <ion-icon @click="storeState.handleSubDays" class="fabButton" :icon="chevronBackOutline"></ion-icon>
+        <ion-text>{{ getMonthAndDay(storeState.currentDate) }}</ion-text>
+        <ion-icon @click="storeState.handleAddDays" class="fabButton" :icon="chevronForwardOutline"></ion-icon>
       </div>
 
       <div class="container flex-col">
@@ -27,11 +27,15 @@
         <div class="container outerCircle">
 
           <div class="dailyAverageCircle container">
-            <ion-text v-if="!state.fetchingWees" class="lg">{{ state.averageWeeDuringDay }} {{
+            <ion-text v-if="!storeState.fetchingWees" class="lg">{{ storeState.averageWeeDuringDay }} {{
               storeState?.user?.weeMeasurement }}</ion-text>
             <ion-spinner v-else name="crescent" />
           </div>
         </div>
+      </div>
+
+      <div class="ion-margin-top container chartContainer">
+        <BarChart />
       </div>
       <AddWeeData name="Home" />
     </ion-content>
@@ -42,36 +46,16 @@
 import { IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
 import { chevronBackOutline, chevronForwardOutline } from "ionicons/icons"
-import { reactive } from 'vue';
 
-import { IHomeState } from "@/types"
-import { getMonthAndDay, getWeesByDay } from "@/utils/helpers"
-import { addDays, subDays } from 'date-fns';
+import { getMonthAndDay } from "@/utils/helpers"
 import { storeState } from "@/store"
+import BarChart from '@/components/BarChart.vue';
 
-const state = reactive<IHomeState>({
-  weesDuringDay: [],
-  averageWeeDuringDay: undefined,
-  currentDate: new Date(),
-  fetchingWees: false,
-})
 
-getWeesByDay(state)
 
 storeState.fetchUserData()
 
-const handleAddDays = () => {
-  state.currentDate = addDays(state.currentDate, 1)
-  getWeesByDay(state)
-
-}
-
-const handleSubDays = () => {
-  state.currentDate = subDays(state.currentDate, 1)
-  getWeesByDay(state)
-
-}
-
+storeState.requestWeesByDay()
 
 
 
@@ -129,6 +113,14 @@ const handleSubDays = () => {
   flex-direction: column;
 }
 
+.flex-row {
+  flex-direction: row;
+}
+
+.flex {
+  display: flex;
+}
+
 .headerTitle {
   padding: 0px;
   text-align: center;
@@ -159,5 +151,9 @@ const handleSubDays = () => {
 
 .xl {
   font-size: x-large;
+}
+
+.weeIcon {
+  color: rgb(235, 180, 3);
 }
 </style>
