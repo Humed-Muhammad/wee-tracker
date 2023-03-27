@@ -14,6 +14,7 @@
     "@ionic/vue": "^6.0.0",
     "@ionic/vue-router": "^6.0.0",
     "@types/lodash": "^4.14.191",
+    "chart.js": "^4.2.1",
     "core-js": "^3.6.5",
     "date-fns": "^2.29.3",
     "firebase": "^9.18.0",
@@ -22,10 +23,12 @@
     "lodash": "^4.17.21",
     "vee-validate": "^4.8.3",
     "vue": "^3.2.21",
+    "vue-chartjs": "^5.2.0",
     "vue-router": "^4.0.12",
     "yup": "^1.0.2"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.9.37",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
