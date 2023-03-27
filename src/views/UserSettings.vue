@@ -8,7 +8,7 @@
     <ion-content :fullscreen="true">
 
       <ion-card>
-        <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/card-media.png" />
+        <img alt="Silhouette of mountains" src="https://robohash.org/{{ storeState.user.uid }}?set=set4" />
         <ion-card-header>
           <ion-card-title>{{ auth.currentUser?.displayName }}</ion-card-title>
           <ion-card-subtitle>{{ auth.currentUser?.email }}</ion-card-subtitle>
@@ -23,6 +23,13 @@
               <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
             </ion-select>
           </ion-item>
+          <div class="logoutButtonContainer">
+            <ion-button v-if="!storeState.updatingData" class="saveButton" size="small"
+              @click="storeState.updateUserWeeMeasurement">Save</ion-button>
+            <ion-button class="saveButton" v-else>
+              <ion-spinner name="crescent" />
+            </ion-button>
+          </div>
           <div class="logoutButtonContainer">
             <ion-label position="stacked" />
             <ion-button @click="logOut" class="logoutButton" size="small">Logout</ion-button>
@@ -63,7 +70,7 @@ storeState.fetchUserData()
 .logoutButtonContainer {
   display: flex;
   width: 100%;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .logoutButton {
@@ -71,5 +78,13 @@ storeState.fetchUserData()
   border-radius: 5px;
   font-size: medium;
   margin: 10px;
+  width: 100%;
+}
+
+.saveButton {
+  border-radius: 5px;
+  font-size: medium;
+  margin: 10px;
+  width: 100%;
 }
 </style>

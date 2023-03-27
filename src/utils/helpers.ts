@@ -1,4 +1,4 @@
-import { IHomeState, IUser, IWeeDuringDaysData } from "@/types";
+import { IUser, IWeeDuringDaysData } from "@/types";
 import { toastController } from "@ionic/vue";
 import { mean } from "lodash";
 import {
@@ -6,34 +6,54 @@ import {
   format,
   // formatISO, subDays
 } from "date-fns";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDocs,
+  onSnapshot,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { auth, db } from ".";
-import { warning } from "ionicons/icons";
+import { checkbox, warning } from "ionicons/icons";
 import { Color } from "@ionic/core";
 
 const weeRef = collection(db, "wees");
 const userRef = collection(db, "users");
 
-export const getWeesByDay = (state: IHomeState) => {
-  state.fetchingWees = true;
-  let dayWeesQuery = query(weeRef, where("uid", "==", auth.currentUser?.uid));
-  dayWeesQuery = query(
-    weeRef,
-    where("weeTime.date", "==", format(state.currentDate, "PP"))
-  );
-  getDocs(dayWeesQuery)
-    .then((data) => {
-      data.forEach((doc) => {
-        state.weesDuringDay?.push(doc.data());
+export const getWeesByDay = (state: IUser) => {
+  try {
+    state.fetchingWees = true;
+    const dayWeesQuery = query(
+      weeRef,
+
+      where("uid", "==", auth.currentUser?.uid),
+      where("weeTime.date", "==", format(state.currentDate, "PP"))
+    );
+
+    onSnapshot(dayWeesQuery, (querySnapshot) => {
+      const result: IWeeDuringDaysData[] | DocumentData = [];
+      querySnapshot.forEach((doc) => {
+        result.push(doc.data());
       });
-      calculateWeeAverage(state);
+
+      state.chartData = result.map((data: IWeeDuringDaysData) => data.weeML);
+      state.chartLabel = result.map(
+        (data: IWeeDuringDaysData) => data.weeTime.time
+      );
+
+      state.weesDuringDay = result;
+
+      state.averageWeeDuringDay = calculateWeeAverage(result);
+
       state.fetchingWees = false;
-    })
-    .catch((err) => {
-      presentToast("Error during fetching", "warning", warning);
-      state.fetchingWees = false;
-      console.log(err);
     });
+  } catch (error) {
+    presentToast("Error during fetching", "warning", warning);
+    state.fetchingWees = false;
+  }
 };
 
 export const getMonthAndDay = (date: Date) => {
@@ -55,11 +75,14 @@ export const presentToast = async (
   await toast.present();
 };
 
-export const calculateWeeAverage = (state: IHomeState) => {
-  const weeML = state.weesDuringDay?.map((item: IWeeDuringDaysData) =>
+export const calculateWeeAverage = (
+  weesDuringDay: IWeeDuringDaysData[] | DocumentData
+) => {
+  const weeML = weesDuringDay?.map((item: IWeeDuringDaysData) =>
     Number(item.weeML)
   );
-  state.averageWeeDuringDay = mean(weeML) || 0;
+  console.log(weeML);
+  return Math.round(mean(weeML)) || 0;
 };
 
 export const getUSerData = async (state: IUser) => {
@@ -76,4 +99,38 @@ export const getUSerData = async (state: IUser) => {
 
       console.log(err);
     });
+};
+
+export const updateUserData = async (storeState: IUser) => {
+  storeState.updatingData = true;
+  const docRef = doc(db, "users", auth.currentUser?.uid as string);
+  updateDoc(docRef, {
+    weeMeasurement: storeState.user.weeMeasurement,
+  })
+    .then(() => {
+      storeState.updatingData = false;
+      presentToast("Measurement updated successfully", "success", checkbox);
+    })
+    .catch((err: any) => {
+      storeState.updatingData = false;
+      if (err.message) {
+        presentToast(err.message, "warning", warning);
+      } else {
+        presentToast(
+          "Error during update please try again!.",
+          "warning",
+          warning
+        );
+      }
+    });
+};
+
+export const convertUnits = (unit: string, to: "FlOz" | "ML") => {
+  if (!to) {
+    throw new Error("to is required!.");
+  }
+  if (to === "ML") {
+    return Math.round(Number(unit) * 0.033814);
+  }
+  return Math.round(Number(unit) * 29.5735);
 };
