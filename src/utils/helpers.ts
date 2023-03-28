@@ -1,4 +1,4 @@
-import { IUser, IWeeDuringDaysData } from "@/types";
+import { IHomeStoreState, IUserStoreState, IWeeDuringDaysData } from "@/types";
 import { toastController } from "@ionic/vue";
 import { mean } from "lodash";
 import {
@@ -23,7 +23,7 @@ import { Color } from "@ionic/core";
 const weeRef = collection(db, "wees");
 const userRef = collection(db, "users");
 
-export const getWeesByDay = (state: IUser) => {
+export const getWeesByDay = (state: IHomeStoreState) => {
   try {
     state.fetchingWees = true;
     const dayWeesQuery = query(
@@ -33,7 +33,7 @@ export const getWeesByDay = (state: IUser) => {
       where("weeTime.date", "==", format(state.currentDate, "PP"))
     );
 
-    onSnapshot(dayWeesQuery, (querySnapshot) => {
+    const unsubscribe = onSnapshot(dayWeesQuery, (querySnapshot) => {
       const result: IWeeDuringDaysData[] | DocumentData = [];
       querySnapshot.forEach((doc) => {
         result.push(doc.data());
@@ -50,6 +50,7 @@ export const getWeesByDay = (state: IUser) => {
 
       state.fetchingWees = false;
     });
+    // unsubscribe();
   } catch (error) {
     presentToast("Error during fetching", "warning", warning);
     state.fetchingWees = false;
@@ -81,11 +82,11 @@ export const calculateWeeAverage = (
   const weeML = weesDuringDay?.map((item: IWeeDuringDaysData) =>
     Number(item.weeML)
   );
-  console.log(weeML);
+
   return Math.round(mean(weeML)) || 0;
 };
 
-export const getUSerData = async (state: IUser) => {
+export const getUSerData = async (state: IUserStoreState) => {
   const userQuery = query(userRef, where("uid", "==", auth.currentUser?.uid));
 
   await getDocs(userQuery)
@@ -101,18 +102,18 @@ export const getUSerData = async (state: IUser) => {
     });
 };
 
-export const updateUserData = async (storeState: IUser) => {
-  storeState.updatingData = true;
+export const updateUserData = async (state: IUserStoreState) => {
+  state.updatingData = true;
   const docRef = doc(db, "users", auth.currentUser?.uid as string);
   updateDoc(docRef, {
-    weeMeasurement: storeState.user.weeMeasurement,
+    weeMeasurement: state.user.weeMeasurement,
   })
     .then(() => {
-      storeState.updatingData = false;
+      state.updatingData = false;
       presentToast("Measurement updated successfully", "success", checkbox);
     })
     .catch((err: any) => {
-      storeState.updatingData = false;
+      state.updatingData = false;
       if (err.message) {
         presentToast(err.message, "warning", warning);
       } else {

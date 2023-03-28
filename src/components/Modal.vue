@@ -8,7 +8,7 @@
 
                     <ion-item>
                         <ion-label position="stacked">Wee amount</ion-label>
-                        <ion-input name="weeML" clearInput autofocus v-model="state.weeML" type="number"
+                        <ion-input name="weeML" clearInput v-model="state.weeML" type="number"
                             placeholder="Add your wee here" required></ion-input>
 
 

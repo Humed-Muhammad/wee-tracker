@@ -14,18 +14,6 @@ export interface IAddWeeData {
 
 export type IWeeDuringDaysData = Omit<IAddWeeData, "creatingDoc">;
 
-export interface IHomeState {
-  weesDuringDay: IWeeDuringDaysData[] | undefined | DocumentData;
-  chartLabel: string[];
-  chartData: number[];
-  averageWeeDuringDay: number | undefined;
-  currentDate: Date;
-  fetchingWees: boolean;
-  requestWeesByDay: () => void;
-  handleAddDays: () => void;
-  handleSubDays: () => void;
-}
-
 export interface IUserInfo {
   weeMeasurement: string;
   createdAt?: { seconds: number; nanoseconds: number };
@@ -35,9 +23,29 @@ export interface IUserInfo {
   uid: string;
 }
 
-export interface IUser extends IHomeState {
-  user: IUserInfo | DocumentData;
+/**@NewState */
+
+export interface IHomeStoreState {
+  weesDuringDay: IWeeDuringDaysData[] | undefined | DocumentData;
+  chartLabel: string[];
+  chartData: number[];
+  averageWeeDuringDay: number | undefined;
+  currentDate: Date;
+  fetchingWees: boolean;
+}
+
+export interface IUserStoreState {
+  authenticated: boolean;
+  errorMsg: string;
   updatingData: boolean;
-  fetchUserData: () => void;
-  updateUserWeeMeasurement: () => void;
+  count: number;
+  user: DocumentData | IUserState;
+}
+
+export interface IUserState {
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  uid: string;
+  weeMeasurement: string;
 }
