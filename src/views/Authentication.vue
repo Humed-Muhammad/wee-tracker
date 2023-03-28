@@ -13,12 +13,9 @@ import {
     IonButton,
     IonIcon,
 } from "@ionic/vue";
-import { reactive, toRefs } from "vue";
-import { useRouter } from "vue-router";
-import { getAuth, signInWithPopup } from "firebase/auth";
-import { db, provider } from "@/utils"
 import { logoGoogle } from 'ionicons/icons';
-import { doc, serverTimestamp, setDoc } from "@firebase/firestore";
+import { useUsersStore } from "@/store/useUsersStore";
+import { storeToRefs } from "pinia";
 
 export default {
     name: "SignIn",
@@ -37,44 +34,16 @@ export default {
         IonIcon,
     },
     setup() {
-        const router = useRouter();
-
-        const state = reactive({
-            authenticated: false,
-            errorMsg: "",
-        });
-        const signInWithGoogle = async (
-        ) => {
-
-            const auth = getAuth();
-            signInWithPopup(auth, provider)
-                .then(async (result) => {
-
-                    const user = result.user;
-
-                    const data = {
-                        uid: user?.uid,
-                        email: user?.email,
-                        createdAt: serverTimestamp(),
-                        fullName: user?.displayName,
-                        phoneNumber: user?.phoneNumber,
-                        weeMeasurement: "",
-                    }
-                    state.authenticated = true;
-
-                    await setDoc(doc(db, "users", user?.uid), data);
-
-                    router.push('/')
-                }).catch((error) => {
-                    state.errorMsg = error.message;
-                });
-        };
+        const store = useUsersStore()
+        const { state } = storeToRefs(store)
+        // store.fetchUserData()
+        const { signInWithGoogle, } = store
 
         return {
-            // eslint-disable-next-line no-undef
-            ...toRefs(state),
+            logoGoogle,
             signInWithGoogle,
-            logoGoogle
+            authenticated: state.value.authenticated,
+            errorMsg: state.value.errorMsg,
         };
     },
 };

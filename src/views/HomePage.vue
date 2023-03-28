@@ -17,9 +17,9 @@
       </ion-card-header>
 
       <div class="chevronContainer">
-        <ion-icon @click="storeState.handleSubDays" class="fabButton" :icon="chevronBackOutline"></ion-icon>
-        <ion-text>{{ getMonthAndDay(storeState.currentDate) }}</ion-text>
-        <ion-icon @click="storeState.handleAddDays" class="fabButton" :icon="chevronForwardOutline"></ion-icon>
+        <ion-icon @click="handleSubDays" class="fabButton" :icon="chevronBackOutline"></ion-icon>
+        <ion-text>{{ getMonthAndDay(homeState.currentDate || new Date()) }}</ion-text>
+        <ion-icon @click="handleAddDays" class="fabButton" :icon="chevronForwardOutline"></ion-icon>
       </div>
 
       <div class="container flex-col">
@@ -27,8 +27,8 @@
         <div class="container outerCircle">
 
           <div class="dailyAverageCircle container">
-            <ion-text v-if="!storeState.fetchingWees" class="lg">{{ storeState.averageWeeDuringDay }} {{
-              storeState?.user?.weeMeasurement }}</ion-text>
+            <ion-text v-if="!homeState.fetchingWees" class="lg">{{ homeState.averageWeeDuringDay }} {{
+              userState.user?.weeMeasurement }}</ion-text>
             <ion-spinner v-else name="crescent" />
           </div>
         </div>
@@ -48,15 +48,21 @@ import AddWeeData from '@/components/AddWeeData.vue';
 import { chevronBackOutline, chevronForwardOutline } from "ionicons/icons"
 
 import { getMonthAndDay } from "@/utils/helpers"
-import { storeState } from "@/store"
+import { useHomeStore } from '@/store/useHomeStore';
+import { useUsersStore } from '@/store/useUsersStore';
+import { storeToRefs } from 'pinia';
 import BarChart from '@/components/BarChart.vue';
 
 
+/**@UserStore */
+const userStore = useUsersStore()
+const { state: userState } = storeToRefs(userStore)
 
-storeState.fetchUserData()
 
-storeState.requestWeesByDay()
-
+/**@HomeStore */
+const homeStore = useHomeStore()
+const { state: homeState } = storeToRefs(homeStore)
+const { handleAddDays, handleSubDays } = homeStore
 
 
 </script>

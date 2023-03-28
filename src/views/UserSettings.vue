@@ -17,22 +17,22 @@
         <ion-card-content>
           <ion-item>
             <ion-label position="stacked">Your Wee Measurement</ion-label>
-            <ion-select interface="popover" name="weeMeasurement" v-model="storeState.user.weeMeasurement"
+            <ion-select interface="popover" name="weeMeasurement" v-model="state.user.weeMeasurement"
               placeholder="Select Wee Measurement">
               <ion-select-option value="ML">ML</ion-select-option>
               <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
             </ion-select>
           </ion-item>
           <div class="logoutButtonContainer">
-            <ion-button v-if="!storeState.updatingData" class="saveButton" size="small"
-              @click="storeState.updateUserWeeMeasurement">Save</ion-button>
+            <ion-button v-if="!state.updatingData" class="saveButton" size="small"
+              @click="store.updateUserWeeMeasurement">Save</ion-button>
             <ion-button class="saveButton" v-else>
               <ion-spinner name="crescent" />
             </ion-button>
           </div>
           <div class="logoutButtonContainer">
             <ion-label position="stacked" />
-            <ion-button @click="logOut" class="logoutButton" size="small">Logout</ion-button>
+            <ion-button @click="store.logOut" class="logoutButton" size="small">Logout</ion-button>
           </div>
         </ion-card-content>
       </ion-card>
@@ -42,21 +42,18 @@
 </template>
 
 <script setup lang="ts">
+import { useUsersStore } from '@/store/useUsersStore';
 import { auth } from '@/utils';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem } from '@ionic/vue';
-
-import { useRouter } from 'vue-router';
-
-import { storeState } from "@/store"
-const router = useRouter()
-
-const logOut = () => {
-  auth.signOut()
-  router.push("/auth")
-}
+import { storeToRefs } from 'pinia';
 
 
-storeState.fetchUserData()
+const store = useUsersStore()
+const { state } = storeToRefs(store)
+// store.fetchUserData()
+
+// console.log(state.value.user)
+
 </script>
 
 <style scoped>

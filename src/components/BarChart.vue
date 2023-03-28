@@ -3,10 +3,10 @@
         responsive: true,
     }" :data="
     {
-        labels: storeState?.chartLabel,
+        labels: state?.chartLabel,
         datasets: [{
-            label: 'Wees During the Day',
-            data: storeState?.chartData,
+            label: 'Wees Amount',
+            data: state?.chartData,
             backgroundColor: [
                 'rgba(255, 206, 96, 0.4)',
             ],
@@ -22,8 +22,15 @@
 <script lang="ts">
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-import { storeState } from "@/store"
+
+import { useHomeStore } from '@/store/useHomeStore'
+import { storeToRefs } from 'pinia'
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+
+/**@HomeStore */
+const homeStore = useHomeStore()
+const { state } = storeToRefs(homeStore)
+
 
 export default {
     name: 'BarChart',
@@ -31,7 +38,7 @@ export default {
     setup() {
 
         return {
-            storeState,
+            state,
 
         }
     },
