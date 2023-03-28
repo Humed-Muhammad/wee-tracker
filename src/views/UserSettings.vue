@@ -37,6 +37,11 @@
         </ion-card-content>
       </ion-card>
 
+      <ion-fab id="addIcon">
+        <ion-fab-button class="fbBtn">
+          <ion-icon :icon="camera"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
     </ion-content>
   </ion-page>
 </template>
@@ -44,15 +49,14 @@
 <script setup lang="ts">
 import { useUsersStore } from '@/store/useUsersStore';
 import { auth } from '@/utils';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem, IonFab, IonFabButton, IonIcon } from '@ionic/vue';
+import { camera } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 
 
 const store = useUsersStore()
 const { state } = storeToRefs(store)
-// store.fetchUserData()
 
-// console.log(state.value.user)
 
 </script>
 
@@ -83,5 +87,12 @@ const { state } = storeToRefs(store)
   font-size: medium;
   margin: 10px;
   width: 100%;
+}
+
+.fbBtn {
+  position: absolute;
+  right: 20px;
+  --background: rgb(70, 68, 68);
+  /* top: 50%; */
 }
 </style>
