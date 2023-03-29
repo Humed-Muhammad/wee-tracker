@@ -6,9 +6,13 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-
-      <ion-card>
-        <img alt="Silhouette of mountains" src="https://robohash.org/{{ storeState.user.uid }}?set=set4" />
+      <ion-icon v-if="state.user.profileURL" @click="chooseFile" class="camera" :icon="camera"></ion-icon>
+      <ion-card class="container">
+        <div style="position: relative;" v-if="state.user.profileURL">
+          <img style="width: 100%;" alt="user profile" :src="state.user.profileURL" />
+          <input @change="store.getProfilePhotoFile" style="display: none;" type="file" ref="input" accept="image/*" />
+        </div>
+        <ion-skeleton-text v-else style="height: 300px;" :animated="true"></ion-skeleton-text>
         <ion-card-header>
           <ion-card-title>{{ auth.currentUser?.displayName }}</ion-card-title>
           <ion-card-subtitle>{{ auth.currentUser?.email }}</ion-card-subtitle>
@@ -37,37 +41,35 @@
         </ion-card-content>
       </ion-card>
 
-      <ion-fab id="addIcon">
-        <ion-fab-button class="fbBtn">
-          <ion-icon :icon="camera"></ion-icon>
-        </ion-fab-button>
-      </ion-fab>
+      <profile-update-modal />
+
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
+import ProfileUpdateModal from '@/components/ProfileUpdateModal.vue';
 import { useUsersStore } from '@/store/useUsersStore';
 import { auth } from '@/utils';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem, IonFab, IonFabButton, IonIcon } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem, IonIcon, IonSkeletonText } from '@ionic/vue';
 import { camera } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
+import { ref, VueElement } from 'vue';
 
 
 const store = useUsersStore()
 const { state } = storeToRefs(store)
 
+const input = ref<VueElement>()
+
+const chooseFile = () => {
+  input?.value?.click()
+}
+
 
 </script>
 
 <style scoped>
-#container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
 .logoutButtonContainer {
   display: flex;
   width: 100%;
@@ -89,10 +91,17 @@ const { state } = storeToRefs(store)
   width: 100%;
 }
 
-.fbBtn {
+.camera {
+  background-color: rgb(61, 57, 57);
+  color: white;
+  font-size: 30px;
+  border: 1px solid rgb(82, 82, 82);
+  border-radius: 10%;
+  padding: 7px;
+  cursor: pointer;
   position: absolute;
-  right: 20px;
-  --background: rgb(70, 68, 68);
-  /* top: 50%; */
+  z-index: 999;
+  left: 16px;
+  top: 67px;
 }
 </style>

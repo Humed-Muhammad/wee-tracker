@@ -5,7 +5,7 @@
     {
         labels: state?.chartLabel,
         datasets: [{
-            label: 'Wees Amount',
+            label: 'Wee Amount',
             data: state?.chartData,
             backgroundColor: [
                 'rgba(255, 206, 96, 0.4)',

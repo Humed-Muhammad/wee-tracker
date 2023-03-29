@@ -38,8 +38,12 @@ export interface IUserStoreState {
   authenticated: boolean;
   errorMsg: string;
   updatingData: boolean;
-  count: number;
+  uploadingFile: boolean;
   user: DocumentData | IUserState;
+  isModalOpen: boolean;
+  profilePhoto: string | ArrayBuffer | null | undefined;
+  profilePhotoPreview: string | ArrayBuffer | null | undefined;
+  profilePhotoName: string;
 }
 
 export interface IUserState {
@@ -48,4 +52,5 @@ export interface IUserState {
   phoneNumber: string;
   uid: string;
   weeMeasurement: string;
+  profileURL: string;
 }
