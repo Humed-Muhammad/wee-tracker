@@ -19,6 +19,7 @@ import {
 import { auth, db } from ".";
 import { checkbox, warning } from "ionicons/icons";
 import { Color } from "@ionic/core";
+import { calculateWeeAverage } from "./baseUtils";
 
 const weeRef = collection(db, "wees");
 const userRef = collection(db, "users");
@@ -76,41 +77,36 @@ export const presentToast = async (
   await toast.present();
 };
 
-export const calculateWeeAverage = (
-  weesDuringDay: IWeeDuringDaysData[] | DocumentData
-) => {
-  const weeML = weesDuringDay?.map((item: IWeeDuringDaysData) =>
-    Number(item.weeML)
-  );
-
-  return Math.round(mean(weeML)) || 0;
-};
-
 export const getUSerData = async (state: IUserStoreState) => {
   const userQuery = query(userRef, where("uid", "==", auth.currentUser?.uid));
 
-  await getDocs(userQuery)
-    .then((data) => {
+  onSnapshot(
+    userQuery,
+    (data) => {
       data.forEach((doc) => {
         state.user = doc.data();
       });
-    })
-    .catch((err) => {
+    },
+    () => {
       presentToast("Error during fetching", "warning", warning);
+    }
+  );
+  // .then((data) => {
+  // })
+  // .catch((err) => {
+  //   presentToast("Error during fetching", "warning", warning);
 
-      console.log(err);
-    });
+  //   console.log(err);
+  // });
 };
 
-export const updateUserData = async (state: IUserStoreState) => {
+export const updateUserData = async (state: IUserStoreState, data: any) => {
   state.updatingData = true;
   const docRef = doc(db, "users", auth.currentUser?.uid as string);
-  updateDoc(docRef, {
-    weeMeasurement: state.user.weeMeasurement,
-  })
+  updateDoc(docRef, data)
     .then(() => {
       state.updatingData = false;
-      presentToast("Measurement updated successfully", "success", checkbox);
+      presentToast("Updated successfully", "success", checkbox);
     })
     .catch((err: any) => {
       state.updatingData = false;
@@ -124,14 +120,4 @@ export const updateUserData = async (state: IUserStoreState) => {
         );
       }
     });
-};
-
-export const convertUnits = (unit: string, to: "FlOz" | "ML") => {
-  if (!to) {
-    throw new Error("to is required!.");
-  }
-  if (to === "ML") {
-    return Math.round(Number(unit) * 0.033814);
-  }
-  return Math.round(Number(unit) * 29.5735);
 };
