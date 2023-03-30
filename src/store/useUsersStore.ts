@@ -1,19 +1,25 @@
 import { IUserStoreState } from "@/types";
 import { auth, db, provider } from "@/utils";
-import { getUSerData, presentToast, updateUserData } from "@/utils/helpers";
+import { userRef } from "@/utils/dbRefs";
+import {
+  changeProfilePhoto,
+  getUSerData,
+  presentToast,
+  updateUserData,
+} from "@/utils/helpers";
 import { getAuth, signInWithPopup } from "firebase/auth";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  doc,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { warning } from "ionicons/icons";
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import {
-  getDownloadURL,
-  ref as fireBaseRef,
-  uploadBytesResumable,
-} from "firebase/storage";
 import { useRouter } from "vue-router";
-
-import { getStorage } from "firebase/storage";
-import { warning } from "ionicons/icons";
 
 export const useUsersStore = defineStore("users", () => {
   const state = ref<IUserStoreState>({
@@ -21,10 +27,12 @@ export const useUsersStore = defineStore("users", () => {
     profilePhotoPreview: undefined,
     profilePhotoName: "",
     uploadingFile: false,
+    updatingProfile: false,
     authenticated: false,
     isModalOpen: false,
     errorMsg: "",
     updatingData: false,
+    fetchingUserData: false,
     user: {
       email: "",
       fullName: "",
@@ -66,7 +74,7 @@ export const useUsersStore = defineStore("users", () => {
     router.push("/auth");
   };
 
-  /**FetchUser data */
+  /**@Fetch User data */
   getUSerData(state.value);
 
   const updateUserWeeMeasurement = () => {
@@ -91,62 +99,24 @@ export const useUsersStore = defineStore("users", () => {
     state.value.isModalOpen = true;
   };
 
-  /**
-   * @Upload
-   * Profile Photo upload
-   *
-   */
-  const storage = getStorage();
-
-  const confirmProfileChange = async () => {
-    const storageRef = fireBaseRef(
-      storage,
-      `images/${state.value?.profilePhotoName}`
-    );
-    const uploadTask = uploadBytesResumable(
-      storageRef,
-      state.value?.profilePhoto as ArrayBuffer
-    );
-    state.value.uploadingFile = true;
-    uploadTask.on(
-      "state_changed",
-      null,
-      (error) => {
-        switch (error.code) {
-          case "storage/unauthorized":
-            // User doesn't have permission to access the object
-            presentToast(
-              "User doesn't have permission to access the object",
-              "error",
-              warning
-            );
-            break;
-          case "storage/canceled":
-            // User canceled the upload
-            presentToast("Upload canceled", "warning", warning);
-            break;
-          case "storage/unknown":
-            // Unknown error occurred, inspect error.serverResponse
-            presentToast("Unknown error occurred", "error", warning);
-
-            break;
-        }
-      },
-      () => {
-        // Handle successful uploads on complete
-
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          updateUserData(state.value, {
-            profileURL: downloadURL,
-          });
-          state.value.uploadingFile = false;
-          state.value.isModalOpen = false;
-        });
-      }
-    );
+  const confirmProfileChange = () => {
+    changeProfilePhoto(state.value);
   };
-  /**@End */
 
+  /**@Realtime Subscription*/
+  const userQuery = query(userRef, where("uid", "==", auth?.currentUser?.uid));
+  onSnapshot(
+    userQuery,
+    (data) => {
+      data.forEach((doc) => {
+        state.value.user = doc.data();
+      });
+    },
+    () => {
+      presentToast("Error during fetching", "warning", warning);
+    }
+  );
+  /**@End */
   return {
     signInWithGoogle,
     updateUserWeeMeasurement,
