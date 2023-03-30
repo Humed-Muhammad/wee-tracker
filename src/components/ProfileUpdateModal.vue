@@ -9,7 +9,7 @@
             </ion-toolbar>
         </ion-header>
         <ion-content class="ion-padding">
-            <img :src="state.profilePhotoPreview?.toString()" />
+            <img style="height: 50%; width: 100%; object-fit: cover;" :src="state.profilePhotoPreview?.toString()" />
             <div class="btnContainer ion-margin-top">
                 <ion-button @click="store.toggleModal" class="cancelBtn">Cancel</ion-button>
                 <ion-button v-if="!state.uploadingFile" @click="store.confirmProfileChange"

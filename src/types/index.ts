@@ -39,6 +39,8 @@ export interface IUserStoreState {
   errorMsg: string;
   updatingData: boolean;
   uploadingFile: boolean;
+  updatingProfile: boolean;
+  fetchingUserData: boolean;
   user: DocumentData | IUserState;
   isModalOpen: boolean;
   profilePhoto: string | ArrayBuffer | null | undefined;

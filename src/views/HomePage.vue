@@ -33,9 +33,10 @@
           </div>
         </div>
       </div>
-
-      <div class="ion-margin-top container chartContainer">
-        <BarChart />
+      <div class="container">
+        <div class="ion-margin-top container chartContainer">
+          <BarChart />
+        </div>
       </div>
       <AddWeeData name="Home" />
     </ion-content>
@@ -113,6 +114,17 @@ const { handleAddDays, handleSubDays } = homeStore
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.chartContainer {
+  width: 50%;
+  justify-self: center;
+}
+
+@media (max-width: 600px) {
+  .chartContainer {
+    width: 100%;
+  }
 }
 
 .flex-col {
