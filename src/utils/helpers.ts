@@ -3,7 +3,6 @@ import { toastController } from "@ionic/vue";
 
 import { format } from "date-fns";
 import {
-  collection,
   doc,
   DocumentData,
   getDocs,
@@ -34,7 +33,7 @@ export const getWeesByDay = (state: IHomeStoreState) => {
       where("weeTime.date", "==", format(state.currentDate, "PP"))
     );
 
-    const unsubscribe = onSnapshot(dayWeesQuery, (querySnapshot) => {
+    onSnapshot(dayWeesQuery, (querySnapshot) => {
       const result: IWeeDuringDaysData[] | DocumentData = [];
       querySnapshot.forEach((doc) => {
         result.push(doc.data());
@@ -91,7 +90,7 @@ export const getUSerData = async (state: IUserStoreState) => {
         state.fetchingUserData = false;
       });
     })
-    .catch((err) => {
+    .catch(() => {
       state.fetchingUserData = false;
       presentToast("Error during fetching", "warning", warning);
     });

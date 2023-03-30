@@ -6,16 +6,18 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ion-icon v-if="state.user.profileURL" @click="chooseFile" class="camera" :icon="camera"></ion-icon>
+      <ion-icon v-if="!state.fetchingUserData" @click="chooseFile" class="camera" :icon="camera"></ion-icon>
+      <input @change="store.getProfilePhotoFile" style="display: none;" type="file" ref="input" accept="image/*" />
       <ion-card class="container">
-        <div style="position: relative;" v-if="state.user.profileURL">
-          <img style="width: 100%;" alt="user profile" :src="state.user.profileURL" />
-          <input @change="store.getProfilePhotoFile" style="display: none;" type="file" ref="input" accept="image/*" />
+        <div class="profileImageContainer" style="position: relative;" v-if="!state.fetchingUserData">
+          <img style="width: 100%; object-fit: cover;" alt="user profile"
+            :src="state.user.profileURL || auth.currentUser?.photoURL" />
         </div>
         <ion-skeleton-text v-else style="height: 300px;" :animated="true"></ion-skeleton-text>
         <ion-card-header>
           <ion-card-title>{{ auth.currentUser?.displayName }}</ion-card-title>
-          <ion-card-subtitle>{{ auth.currentUser?.email }}</ion-card-subtitle>
+          <ion-card-subtitle style="text-transform: none; font-size: larger;">{{ auth.currentUser?.email
+          }}</ion-card-subtitle>
         </ion-card-header>
 
         <ion-card-content>
@@ -27,6 +29,7 @@
               <ion-select-option value="fl. oz.">fl. oz.</ion-select-option>
             </ion-select>
           </ion-item>
+
           <div class="logoutButtonContainer">
             <ion-button v-if="!state.updatingData" class="saveButton" size="small"
               @click="store.updateUserWeeMeasurement">Save</ion-button>
@@ -37,6 +40,9 @@
           <div class="logoutButtonContainer">
             <ion-label position="stacked" />
             <ion-button @click="store.logOut" class="logoutButton" size="small">Logout</ion-button>
+          </div>
+          <div class="ion-padding">
+            <ion-text @click="router.push('/change-password')" class="changePasswordText">Change Password?</ion-text>
           </div>
         </ion-card-content>
       </ion-card>
@@ -55,14 +61,16 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLab
 import { camera } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import { ref, VueElement } from 'vue';
+import { useRouter } from 'vue-router';
 
-
+const router = useRouter()
 const store = useUsersStore()
 const { state } = storeToRefs(store)
 
 const input = ref<VueElement>()
 
 const chooseFile = () => {
+  console.log(input.value)
   input?.value?.click()
 }
 
@@ -100,8 +108,17 @@ const chooseFile = () => {
   padding: 7px;
   cursor: pointer;
   position: absolute;
-  z-index: 999;
+  z-index: 9999;
   left: 16px;
   top: 67px;
+}
+
+.profileImageContainer {
+  width: 100%;
+  height: 350px;
+}
+
+.changePasswordText {
+  color: rgb(24, 126, 221);
 }
 </style>

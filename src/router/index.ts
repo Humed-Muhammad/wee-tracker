@@ -32,6 +32,11 @@ const routes: Array<RouteRecordRaw> = [
     // beforeEnter: guard,
   },
   {
+    path: "/change-password",
+    component: () => import("@/views/ChangePassword.vue"),
+    beforeEnter: guard,
+  },
+  {
     path: "/",
     component: Tabs,
     children: [

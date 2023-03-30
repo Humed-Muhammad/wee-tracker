@@ -7,7 +7,7 @@ import {
   presentToast,
   updateUserData,
 } from "@/utils/helpers";
-import { getAuth, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithPopup, updatePassword, User } from "firebase/auth";
 import {
   doc,
   onSnapshot,
@@ -16,7 +16,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { warning } from "ionicons/icons";
+import { checkbox, warning } from "ionicons/icons";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -33,6 +33,7 @@ export const useUsersStore = defineStore("users", () => {
     errorMsg: "",
     updatingData: false,
     fetchingUserData: false,
+    newPassword: "",
     user: {
       email: "",
       fullName: "",
@@ -103,6 +104,22 @@ export const useUsersStore = defineStore("users", () => {
     changeProfilePhoto(state.value);
   };
 
+  const changePassword = () => {
+    const user = auth.currentUser;
+    if (state.value.newPassword && user) {
+      updatePassword(user as User, state.value.newPassword)
+        .then(() => {
+          // Update successful.
+          presentToast("Password Successfully Changed", "success", checkbox);
+        })
+        .catch((error) => {
+          // An error ocurred
+          presentToast("An Error Occurred", "error", warning);
+          // ...
+        });
+    }
+  };
+
   /**@Realtime Subscription*/
   const userQuery = query(userRef, where("uid", "==", auth?.currentUser?.uid));
   onSnapshot(
@@ -125,5 +142,6 @@ export const useUsersStore = defineStore("users", () => {
     state,
     getProfilePhotoFile,
     confirmProfileChange,
+    changePassword,
   };
 });

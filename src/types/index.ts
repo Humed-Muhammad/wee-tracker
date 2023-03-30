@@ -46,6 +46,7 @@ export interface IUserStoreState {
   profilePhoto: string | ArrayBuffer | null | undefined;
   profilePhotoPreview: string | ArrayBuffer | null | undefined;
   profilePhotoName: string;
+  newPassword: string;
 }
 
 export interface IUserState {
