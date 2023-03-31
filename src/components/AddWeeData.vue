@@ -8,6 +8,7 @@
 </template>
 
 <script setup lang="ts">
+import { IonFabButton, IonIcon, IonFab } from "@ionic/vue"
 import { add } from 'ionicons/icons';
 import Modal from './Modal.vue';
 defineProps({

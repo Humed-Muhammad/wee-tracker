@@ -1,21 +1,14 @@
 import { IUserStoreState } from "@/types";
 import { auth, db, provider } from "@/utils";
-import { userRef } from "@/utils/dbRefs";
 import {
   changeProfilePhoto,
   getUSerData,
   presentToast,
   updateUserData,
 } from "@/utils/helpers";
-import { getAuth, signInWithPopup, updatePassword, User } from "firebase/auth";
-import {
-  doc,
-  onSnapshot,
-  query,
-  serverTimestamp,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { subscribeToUserDataChanged } from "@/utils/subscribe";
+import { signInWithPopup, updatePassword, User } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { checkbox, warning } from "ionicons/icons";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -28,11 +21,12 @@ export const useUsersStore = defineStore("users", () => {
     profilePhotoName: "",
     uploadingFile: false,
     updatingProfile: false,
-    authenticated: false,
+    isSigningIn: false,
     isModalOpen: false,
     errorMsg: "",
     updatingData: false,
     fetchingUserData: false,
+    userCredentials: undefined,
     newPassword: "",
     user: {
       email: "",
@@ -44,27 +38,25 @@ export const useUsersStore = defineStore("users", () => {
     },
   });
   const router = useRouter();
-  const signInWithGoogle = async () => {
-    const auth = getAuth();
+  const signInWithGoogle = async (shouldNavigate?: boolean) => {
+    state.value.isSigningIn = true;
     signInWithPopup(auth, provider)
       .then(async (result) => {
+        state.value.userCredentials = result;
         const user = result.user;
 
         const data = {
           uid: user?.uid,
           email: user?.email,
-          createdAt: serverTimestamp(),
-          fullName: user?.displayName,
-          phoneNumber: user?.phoneNumber,
-          weeMeasurement: "",
         };
-        state.value.authenticated = true;
 
         await setDoc(doc(db, "users", user?.uid), data);
 
-        router.push("/");
+        shouldNavigate && router.push("/");
+        state.value.isSigningIn = false;
       })
       .catch((error) => {
+        state.value.isSigningIn = false;
         state.value.errorMsg = error.message;
       });
   };
@@ -76,7 +68,11 @@ export const useUsersStore = defineStore("users", () => {
   };
 
   /**@Fetch User data */
-  getUSerData(state.value);
+  const fetchUserData = () => {
+    if (auth.currentUser?.uid) {
+      getUSerData(state.value);
+    }
+  };
 
   const updateUserWeeMeasurement = () => {
     updateUserData(state.value, {
@@ -112,7 +108,7 @@ export const useUsersStore = defineStore("users", () => {
           // Update successful.
           presentToast("Password Successfully Changed", "success", checkbox);
         })
-        .catch((error) => {
+        .catch(() => {
           // An error ocurred
           presentToast("An Error Occurred", "error", warning);
           // ...
@@ -121,18 +117,7 @@ export const useUsersStore = defineStore("users", () => {
   };
 
   /**@Realtime Subscription*/
-  const userQuery = query(userRef, where("uid", "==", auth?.currentUser?.uid));
-  onSnapshot(
-    userQuery,
-    (data) => {
-      data.forEach((doc) => {
-        state.value.user = doc.data();
-      });
-    },
-    () => {
-      presentToast("Error during fetching", "warning", warning);
-    }
-  );
+  subscribeToUserDataChanged(state.value);
   /**@End */
   return {
     signInWithGoogle,
@@ -143,5 +128,6 @@ export const useUsersStore = defineStore("users", () => {
     getProfilePhotoFile,
     confirmProfileChange,
     changePassword,
+    fetchUserData,
   };
 });

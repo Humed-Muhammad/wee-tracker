@@ -1,3 +1,4 @@
+import { auth } from "@/utils";
 import { createRouter, createWebHistory } from "@ionic/vue-router";
 import {
   RouteRecordRaw,
@@ -5,7 +6,6 @@ import {
   NavigationGuardNext,
 } from "vue-router";
 import Tabs from "../views/TabsPage.vue";
-import { auth } from "@/utils";
 
 const guard = (
   to: RouteLocationNormalized,
@@ -28,7 +28,7 @@ const guard = (
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/auth",
-    component: () => import("@/views/Authentication.vue"),
+    component: () => import("@/views/AuthenticationPage.vue"),
     // beforeEnter: guard,
   },
   {

@@ -34,7 +34,7 @@
             <ion-button v-if="!state.updatingData" class="saveButton" size="small"
               @click="store.updateUserWeeMeasurement">Save</ion-button>
             <ion-button class="saveButton" v-else>
-              <ion-spinner name="crescent" />
+              <ion-spinner name="dots" />
             </ion-button>
           </div>
           <div class="logoutButtonContainer">
@@ -57,7 +57,9 @@
 import ProfileUpdateModal from '@/components/ProfileUpdateModal.vue';
 import { useUsersStore } from '@/store/useUsersStore';
 import { auth } from '@/utils';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem, IonIcon, IonSkeletonText } from '@ionic/vue';
+import {
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonLabel, IonSelect, IonSelectOption, IonItem, IonIcon, IonSkeletonText, IonCardTitle, IonCardSubtitle, IonCardHeader, IonSpinner, IonText, IonCardContent, IonCard,
+} from '@ionic/vue';
 import { camera } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import { ref, VueElement } from 'vue';
@@ -66,6 +68,9 @@ import { useRouter } from 'vue-router';
 const router = useRouter()
 const store = useUsersStore()
 const { state } = storeToRefs(store)
+
+/**@FetchUserData */
+store.fetchUserData()
 
 const input = ref<VueElement>()
 
@@ -115,7 +120,7 @@ const chooseFile = () => {
 
 .profileImageContainer {
   width: 100%;
-  height: 350px;
+  height: auto;
 }
 
 .changePasswordText {

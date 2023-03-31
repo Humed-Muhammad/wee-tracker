@@ -1,3 +1,4 @@
+import { AuthCredential, UserCredential } from "firebase/auth";
 import { DocumentData } from "firebase/firestore";
 
 export interface IAddWeeData {
@@ -35,7 +36,8 @@ export interface IHomeStoreState {
 }
 
 export interface IUserStoreState {
-  authenticated: boolean;
+  userCredentials: any | undefined;
+  isSigningIn: boolean;
   errorMsg: string;
   updatingData: boolean;
   uploadingFile: boolean;

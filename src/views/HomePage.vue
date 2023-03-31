@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText } from '@ionic/vue';
+import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonIcon, IonSpinner } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
 import { chevronBackOutline, chevronForwardOutline } from "ionicons/icons"
 
@@ -59,7 +59,8 @@ import BarChart from '@/components/BarChart.vue';
 const userStore = useUsersStore()
 const { state: userState } = storeToRefs(userStore)
 
-
+/**@FetchUserData */
+userStore.fetchUserData()
 /**@HomeStore */
 const homeStore = useHomeStore()
 const { state: homeState } = storeToRefs(homeStore)
