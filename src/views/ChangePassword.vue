@@ -16,8 +16,7 @@
                 <ion-card-content>
                     <div v-if="state.isReAuthenticationSuccess">
                         <ion-item>
-                            <ion-label position="floating">New Password</ion-label>
-                            <ion-input type="password" v-model="state.newPassword" />
+                            <ion-input aria-label="New Password" type="password" v-model="state.newPassword" />
                         </ion-item>
                         <div class="container ion-margin-top ion-margin-bottom">
                             <ion-button class="saveButton">Ok</ion-button>
@@ -34,7 +33,7 @@
 <script setup lang="ts" >
 import { useUsersStore } from '@/store/useUsersStore';
 import SigninWithGoogle from '@/components/shared/SigninWithGoogle.vue';
-import { IonPage, IonCardHeader, IonHeader, IonToolbar, IonContent, IonLabel, IonItem, IonButton, IonInput, IonTitle, IonCard, IonImg, IonCardContent, IonCardTitle } from '@ionic/vue';
+import { IonPage, IonCardHeader, IonHeader, IonToolbar, IonContent, IonItem, IonButton, IonInput, IonTitle, IonCard, IonImg, IonCardContent, IonCardTitle } from '@ionic/vue';
 import { storeToRefs } from 'pinia';
 
 
