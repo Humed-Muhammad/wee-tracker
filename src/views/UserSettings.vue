@@ -75,7 +75,6 @@ store.fetchUserData()
 const input = ref<VueElement>()
 
 const chooseFile = () => {
-  console.log(input.value)
   input?.value?.click()
 }
 

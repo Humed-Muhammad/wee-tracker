@@ -1,5 +1,5 @@
 import { IUserStoreState } from "@/types";
-import { auth, provider } from "@/utils";
+import { auth, db, provider } from "@/utils";
 import {
   changeProfilePhoto,
   getUSerData,
@@ -8,6 +8,7 @@ import {
 } from "@/utils/helpers";
 import { subscribeToUserDataChanged } from "@/utils/subscribe";
 import { signInWithPopup, updatePassword, User } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { checkbox, warning } from "ionicons/icons";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -44,9 +45,23 @@ export const useUsersStore = defineStore("users", () => {
     state.value.isSigningIn = true;
     signInWithPopup(auth, provider)
       .then(async (result) => {
+        const signedUser = result.user;
         if (reAuthenticateUser && result.user.uid === auth.currentUser?.uid) {
           state.value.isReAuthenticationSuccess = true;
         }
+        await getUSerData(state.value);
+        /**@CheckUser Existence Before creating user document */
+        if (signedUser.uid !== state.value.user.uid) {
+          const data = {
+            uid: signedUser?.uid,
+            email: signedUser?.email,
+            phoneNumber: signedUser?.phoneNumber,
+            photoURL: signedUser?.photoURL,
+          };
+
+          await setDoc(doc(db, "users", signedUser?.uid), data);
+        }
+
         shouldNavigate && router.push("/");
         state.value.isSigningIn = false;
       })

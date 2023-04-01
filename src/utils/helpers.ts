@@ -83,7 +83,7 @@ export const getUSerData = async (state: IUserStoreState) => {
     where("uid", "==", auth?.currentUser?.uid || "")
   );
 
-  getDocs(userQuery)
+  await getDocs(userQuery)
     .then((data) => {
       data.forEach((doc) => {
         state.user = doc.data();
