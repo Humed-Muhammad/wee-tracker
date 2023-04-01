@@ -11,8 +11,9 @@
   },
   "dependencies": {
     "@capacitor/core": "4.7.1",
-    "@ionic/vue": "^6.0.0",
-    "@ionic/vue-router": "^6.0.0",
+    "@ionic/core": "7",
+    "@ionic/vue": "7",
+    "@ionic/vue-router": "7",
     "@types/lodash": "^4.14.191",
     "chart.js": "^4.2.1",
     "core-js": "^3.6.5",
@@ -23,9 +24,9 @@
     "lodash": "^4.17.21",
     "pinia": "^2.0.33",
     "vee-validate": "^4.8.3",
-    "vue": "^3.2.21",
+    "vue": "^3.2.47",
     "vue-chartjs": "^5.2.0",
-    "vue-router": "^4.0.12",
+    "vue-router": "^4.1.6",
     "yup": "^1.0.2"
   },
   "devDependencies": {
