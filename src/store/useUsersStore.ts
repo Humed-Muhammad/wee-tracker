@@ -1,5 +1,5 @@
 import { IUserStoreState } from "@/types";
-import { auth, db, provider } from "@/utils";
+import { auth, provider } from "@/utils";
 import {
   changeProfilePhoto,
   getUSerData,
@@ -8,7 +8,6 @@ import {
 } from "@/utils/helpers";
 import { subscribeToUserDataChanged } from "@/utils/subscribe";
 import { signInWithPopup, updatePassword, User } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
 import { checkbox, warning } from "ionicons/icons";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -26,7 +25,7 @@ export const useUsersStore = defineStore("users", () => {
     errorMsg: "",
     updatingData: false,
     fetchingUserData: false,
-    userCredentials: undefined,
+    isReAuthenticationSuccess: false,
     newPassword: "",
     user: {
       email: "",
@@ -38,24 +37,21 @@ export const useUsersStore = defineStore("users", () => {
     },
   });
   const router = useRouter();
-  const signInWithGoogle = async (shouldNavigate?: boolean) => {
+  const signInWithGoogle = (
+    shouldNavigate?: boolean,
+    reAuthenticateUser?: boolean
+  ) => {
     state.value.isSigningIn = true;
     signInWithPopup(auth, provider)
       .then(async (result) => {
-        state.value.userCredentials = result;
-        const user = result.user;
-
-        const data = {
-          uid: user?.uid,
-          email: user?.email,
-        };
-
-        await setDoc(doc(db, "users", user?.uid), data);
-
+        if (reAuthenticateUser && result.user.uid === auth.currentUser?.uid) {
+          state.value.isReAuthenticationSuccess = true;
+        }
         shouldNavigate && router.push("/");
         state.value.isSigningIn = false;
       })
       .catch((error) => {
+        state.value.isReAuthenticationSuccess = false;
         state.value.isSigningIn = false;
         state.value.errorMsg = error.message;
       });

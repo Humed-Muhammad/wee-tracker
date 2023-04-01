@@ -11,6 +11,7 @@ import {
     IonCardHeader,
     IonCardContent,
     IonCardTitle,
+    IonImg,
 
 } from "@ionic/vue";
 import { useUsersStore } from "@/store/useUsersStore";
@@ -39,7 +40,7 @@ const { signInWithGoogle, } = store
                     <ion-card-header>
                         <ion-card-subtitle>Welcome to Wee Tracker!</ion-card-subtitle>
                         <ion-card-title> Sign In </ion-card-title>
-                        <img src="assets/login.jpg" />
+                        <ion-img src="assets/login.jpg" />
                     </ion-card-header>
 
                     <ion-card-content

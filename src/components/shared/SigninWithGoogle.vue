@@ -1,6 +1,6 @@
 <template>
     <ion-button v-if="!props.isSigningIn" color="light" class="ion-margin signInBtn" @click="props.command">
-        <img width="35" src="assets/google.png" />
+        <ion-img style="width: 35px" src="assets/google.png" />
         {{ text || " Sign In With Google" }}
     </ion-button>
     <ion-button color="dark" class="ion-margin signInBtn" v-else>
@@ -12,7 +12,8 @@
 import { defineProps } from 'vue';
 import {
     IonButton,
-    IonSpinner
+    IonSpinner,
+    IonImg
 } from "@ionic/vue"
 const props = defineProps<{
     command: () => void,
