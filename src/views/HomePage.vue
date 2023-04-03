@@ -16,11 +16,8 @@
         <ion-card-subtitle>During the day</ion-card-subtitle>
       </ion-card-header>
 
-      <div class="chevronContainer">
-        <ion-icon @click="handleSubDays" class="fabButton" :icon="chevronBackOutline"></ion-icon>
-        <ion-text>{{ getMonthAndDay(homeState.currentDate || new Date()) }}</ion-text>
-        <ion-icon @click="handleAddDays" class="fabButton" :icon="chevronForwardOutline"></ion-icon>
-      </div>
+      <ChevronFilters :handle-add-date="handleAddDays" :handle-sub-date="handleSubDays"
+        :date="getMonthAndDay(homeState.currentDate || new Date())" />
 
       <div class="container flex-col">
         <ion-text class="averageText">Average</ion-text>
@@ -46,13 +43,12 @@
 <script setup lang="ts">
 import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonIcon, IonSpinner } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
-import { chevronBackOutline, chevronForwardOutline } from "ionicons/icons"
-
 import { getMonthAndDay } from "@/utils/helpers"
 import { useHomeStore } from '@/store/useHomeStore';
 import { useUsersStore } from '@/store/useUsersStore';
 import { storeToRefs } from 'pinia';
 import BarChart from '@/components/BarChart.vue';
+import ChevronFilters from '@/components/shared/ChevronFilters.vue';
 
 
 /**@UserStore */
@@ -95,20 +91,6 @@ const { handleAddDays, handleSubDays } = homeStore
   justify-content: space-around;
   /* line-height: 1; */
   flex-grow: 1;
-}
-
-.chevronContainer {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.fabButton {
-  background-color: aliceblue;
-  padding: 10px;
-  border-radius: 10px;
-  cursor: pointer;
 }
 
 .container {
