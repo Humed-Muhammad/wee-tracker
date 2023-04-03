@@ -1,7 +1,7 @@
 import { IHomeStoreState, IUserStoreState, IWeeDuringDaysData } from "@/types";
 import { toastController } from "@ionic/vue";
 
-import { format } from "date-fns";
+import { endOfWeek, format, startOfWeek } from "date-fns";
 import {
   doc,
   DocumentData,
@@ -30,7 +30,7 @@ export const getWeesByDay = (state: IHomeStoreState) => {
     const dayWeesQuery = query(
       weeRef,
       where("uid", "==", auth.currentUser?.uid),
-      where("weeTime.date", "==", format(state.currentDate, "PP"))
+      where("weeDate", "==", format(state.currentDate, "PP"))
     );
 
     onSnapshot(dayWeesQuery, (querySnapshot) => {
@@ -40,9 +40,7 @@ export const getWeesByDay = (state: IHomeStoreState) => {
       });
 
       state.chartData = result.map((data: IWeeDuringDaysData) => data.weeML);
-      state.chartLabel = result.map(
-        (data: IWeeDuringDaysData) => data.weeTime.time
-      );
+      state.chartLabel = result.map((data: IWeeDuringDaysData) => data.weeTime);
 
       state.weesDuringDay = result;
 
@@ -175,3 +173,21 @@ export const changeProfilePhoto = async (state: IUserStoreState) => {
   );
 };
 /**@End */
+
+/**@WeeksDayAggregator */
+export const groupWeeks = (date: Date) => {
+  const getStartOfWeek = startOfWeek(date);
+  const getEndOfWeek = endOfWeek(date);
+  switch (true) {
+    case format(getStartOfWeek, "LLL") === format(getEndOfWeek, "LLL"):
+      return `${format(getStartOfWeek, "d")} - ${format(
+        getEndOfWeek,
+        "d"
+      )} ${format(getEndOfWeek, "LLLL")}`;
+    default:
+      return `${format(getStartOfWeek, "d")} ${format(
+        getStartOfWeek,
+        "LLLL"
+      )} - ${format(getEndOfWeek, "d")} ${format(getEndOfWeek, "LLLL")}`;
+  }
+};

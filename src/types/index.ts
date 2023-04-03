@@ -34,6 +34,10 @@ export interface IHomeStoreState {
   fetchingWees: boolean;
 }
 
+export interface IWeeklyStoreState {
+  filterDate: Date;
+}
+
 export interface IUserStoreState {
   isReAuthenticationSuccess: boolean;
   isSigningIn: boolean;
