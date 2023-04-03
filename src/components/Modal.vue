@@ -89,12 +89,9 @@ export default defineComponent({
                 state.creatingDoc = true;
                 const docRef = await addDoc(collection(db, "wees"), {
                     uid: auth?.currentUser?.uid,
-                    weeTime: {
-                        date: format(parseISO(state.weeTime), "PP"),
-                        time: format(parseISO(state.weeTime), "p")
-                    },
+                    weeDate: format(parseISO(state.weeTime), "PP"),
+                    weeTime: format(parseISO(state.weeTime), "p"),
                     weeML: state.weeML,
-                    weeMeasurement: state.weeMeasurement,
                     incontinence: state.incontinence,
                     urgency: state.urgency,
                     createdAt: serverTimestamp(),
