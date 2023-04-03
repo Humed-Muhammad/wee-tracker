@@ -51,7 +51,7 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "tab2",
-        component: () => import("@/views/Tab2Page.vue"),
+        component: () => import("@/views/WeeklyAndMonthly.vue"),
         beforeEnter: guard,
       },
       {
