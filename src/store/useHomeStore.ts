@@ -1,4 +1,5 @@
 import { IHomeStoreState } from "@/types";
+import { auth } from "@/utils";
 import { getWeesByDay } from "@/utils/helpers";
 import { addDays, subDays } from "date-fns";
 import { defineStore } from "pinia";
@@ -14,15 +15,21 @@ export const useHomeStore = defineStore("home", () => {
     currentDate: new Date(),
   });
 
-  getWeesByDay(state.value);
+  if (auth.currentUser?.uid) {
+    getWeesByDay(state.value);
+  }
 
   const handleAddDays = () => {
     state.value.currentDate = addDays(state.value.currentDate, 1);
-    getWeesByDay(state.value);
+    if (auth.currentUser?.uid) {
+      getWeesByDay(state.value);
+    }
   };
   const handleSubDays = () => {
     state.value.currentDate = subDays(state.value.currentDate, 1);
-    getWeesByDay(state.value);
+    if (auth.currentUser?.uid) {
+      getWeesByDay(state.value);
+    }
   };
   return { handleAddDays, handleSubDays, state };
 });

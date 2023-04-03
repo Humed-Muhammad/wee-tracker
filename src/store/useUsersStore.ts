@@ -46,9 +46,9 @@ export const useUsersStore = defineStore("users", () => {
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const signedUser = result.user;
-        if (reAuthenticateUser && result.user.uid === auth.currentUser?.uid) {
-          state.value.isReAuthenticationSuccess = true;
-        }
+        // if (reAuthenticateUser && result.user.uid === auth.currentUser?.uid) {
+        //   state.value.isReAuthenticationSuccess = true;
+        // }
         await getUSerData(state.value);
         /**@CheckUser Existence Before creating user document */
         if (signedUser.uid !== state.value.user.uid) {
@@ -57,6 +57,7 @@ export const useUsersStore = defineStore("users", () => {
             email: signedUser?.email,
             phoneNumber: signedUser?.phoneNumber,
             photoURL: signedUser?.photoURL,
+            weeMeasurement: "",
           };
 
           await setDoc(doc(db, "users", signedUser?.uid), data);
