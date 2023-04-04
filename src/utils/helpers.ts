@@ -1,5 +1,4 @@
-import { IHomeStoreState, IUserStoreState, IWeeDuringDaysData } from "@/types";
-import { toastController } from "@ionic/vue";
+import { IHomeStoreState, IUserStoreState, IWeeData } from "@/types";
 
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import {
@@ -13,8 +12,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from ".";
 import { checkbox, warning } from "ionicons/icons";
-import { Color } from "@ionic/core";
-import { calculateWeeAverage } from "./baseUtils";
+import { calculateWeeAverage, presentToast } from "./baseUtils";
 import {
   getDownloadURL,
   getStorage,
@@ -34,13 +32,13 @@ export const getWeesByDay = (state: IHomeStoreState) => {
     );
 
     onSnapshot(dayWeesQuery, (querySnapshot) => {
-      const result: IWeeDuringDaysData[] | DocumentData = [];
+      const result: IWeeData[] | DocumentData = [];
       querySnapshot.forEach((doc) => {
         result.push(doc.data());
       });
 
-      state.chartData = result.map((data: IWeeDuringDaysData) => data.weeML);
-      state.chartLabel = result.map((data: IWeeDuringDaysData) => data.weeTime);
+      state.chartData = result.map((data: IWeeData) => data.weeML);
+      state.chartLabel = result.map((data: IWeeData) => data.weeTime);
 
       state.weesDuringDay = result;
 
@@ -57,21 +55,6 @@ export const getWeesByDay = (state: IHomeStoreState) => {
 
 export const getMonthAndDay = (date: Date) => {
   return `${format(date, "LLL")} ${format(date, "d")}`;
-};
-
-export const presentToast = async (
-  message: string,
-  color: Color,
-  icon?: string | undefined
-) => {
-  const toast = await toastController.create({
-    message,
-    duration: 2500,
-    icon: icon,
-    color,
-  });
-
-  await toast.present();
 };
 
 export const getUSerData = async (state: IUserStoreState) => {

@@ -3,9 +3,9 @@ import { auth, db, provider } from "@/utils";
 import {
   changeProfilePhoto,
   getUSerData,
-  presentToast,
   updateUserData,
 } from "@/utils/helpers";
+import { presentToast } from "@/utils/baseUtils";
 import { subscribeToUserDataChanged } from "@/utils/subscribe";
 import { signInWithPopup, updatePassword, User } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";

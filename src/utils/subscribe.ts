@@ -3,7 +3,7 @@ import { onSnapshot, query, where } from "firebase/firestore";
 import { warning } from "ionicons/icons";
 import { auth } from ".";
 import { userRef } from "./dbRefs";
-import { presentToast } from "./helpers";
+import { presentToast } from "./baseUtils";
 
 export const subscribeToUserDataChanged = (storeState: IUserStoreState) => {
   if (auth.currentUser?.uid) {

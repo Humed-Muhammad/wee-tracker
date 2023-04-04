@@ -7,7 +7,7 @@
                 <div id="#container">
 
                     <ion-item>
-                        <ion-label position="stacked">Wee amount</ion-label>
+                        <ion-label position="stacked">Wee amount (ML)</ion-label>
                         <ion-input name="weeML" clearInput v-model="state.weeML" type="number"
                             placeholder="Add your wee here" required></ion-input>
 
@@ -56,7 +56,7 @@ import { defineComponent, reactive } from 'vue';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useForm, Form as ValidationForm } from 'vee-validate';
 import { format, parseISO } from 'date-fns';
-import { presentToast } from '@/utils/helpers';
+import { presentToast } from '@/utils/baseUtils';
 
 export default defineComponent({
     name: "WeeModal",
