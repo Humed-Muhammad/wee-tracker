@@ -24,15 +24,16 @@
         <div class="container outerCircle">
 
           <div class="dailyAverageCircle container">
-            <ion-text v-if="!homeState.fetchingWees" class="lg">{{ homeState.averageWeeDuringDay }} {{
-              userState.user?.weeMeasurement }}</ion-text>
+            <ion-text v-if="!homeState.fetchingWees" class="md">{{
+              convertUnits(homeState.averageWeeDuringDay, userState.user?.weeMeasurement) }} {{
+    userState.user?.weeMeasurement }}</ion-text>
             <ion-spinner v-else name="crescent" />
           </div>
         </div>
       </div>
       <div class="container">
         <div class="ion-margin-top container chartContainer">
-          <BarChart />
+          <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" />
         </div>
       </div>
       <AddWeeData name="Home" />
@@ -44,10 +45,11 @@
 import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonIcon, IonSpinner } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
 import { getMonthAndDay } from "@/utils/helpers"
+import { convertUnits } from "@/utils/baseUtils"
 import { useHomeStore } from '@/store/useHomeStore';
 import { useUsersStore } from '@/store/useUsersStore';
 import { storeToRefs } from 'pinia';
-import BarChart from '@/components/BarChart.vue';
+import BarChart from '@/components/shared/BarChart.vue';
 import ChevronFilters from '@/components/shared/ChevronFilters.vue';
 
 
@@ -144,6 +146,10 @@ const { handleAddDays, handleSubDays } = homeStore
   height: 120px;
   width: 120px;
   margin-top: 15px;
+}
+
+.md {
+  font-size: medium;
 }
 
 .lg {
