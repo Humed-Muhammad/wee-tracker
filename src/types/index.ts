@@ -3,16 +3,14 @@ import { DocumentData } from "firebase/firestore";
 export interface IAddWeeData {
   weeMeasurement: string;
   weeML: undefined;
-  weeTime: {
-    date: Date;
-    time: string;
-  };
+  weeTime: string;
+  weeDate: string;
   creatingDoc: boolean;
   urgency: boolean;
   incontinence: boolean;
 }
 
-export type IWeeDuringDaysData = Omit<IAddWeeData, "creatingDoc">;
+export type IWeeData = Omit<IAddWeeData, "creatingDoc">;
 
 export interface IUserInfo {
   weeMeasurement: string;
@@ -26,7 +24,7 @@ export interface IUserInfo {
 /**@NewState */
 
 export interface IHomeStoreState {
-  weesDuringDay: IWeeDuringDaysData[] | undefined | DocumentData;
+  weesDuringDay: IWeeData[] | undefined | DocumentData;
   chartLabel: string[];
   chartData: number[];
   averageWeeDuringDay: number | undefined;
@@ -35,7 +33,14 @@ export interface IHomeStoreState {
 }
 
 export interface IWeeklyStoreState {
+  weesDuringWeek: IWeeData[] | undefined | DocumentData;
+  averageWeeDuringWeek: number | undefined;
+  minDuringWeek: number | undefined;
+  maxDuringWeek: number | undefined;
   filterDate: Date;
+  fetchingWeeklyWees: boolean;
+  chartLabel: string[];
+  chartData: number[];
 }
 
 export interface IUserStoreState {
@@ -59,6 +64,6 @@ export interface IUserState {
   fullName: string;
   phoneNumber: string;
   uid: string;
-  weeMeasurement: string;
+  weeMeasurement: "fl. oz." | "ML";
   profileURL: string;
 }
