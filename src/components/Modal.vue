@@ -55,7 +55,7 @@ import {
 import { defineComponent, reactive } from 'vue';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useForm, Form as ValidationForm } from 'vee-validate';
-import { format, parseISO } from 'date-fns';
+import { format, formatISO, parseISO } from 'date-fns';
 import { presentToast } from '@/utils/baseUtils';
 
 export default defineComponent({
@@ -76,7 +76,7 @@ export default defineComponent({
         const state = reactive({
             weeMeasurement: '',
             weeML: undefined,
-            weeTime: "",
+            weeTime: formatISO(new Date()),
             creatingDoc: false,
             urgency: false,
             incontinence: false
