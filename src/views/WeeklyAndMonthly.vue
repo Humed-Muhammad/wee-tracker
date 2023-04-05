@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
 
-        <ion-segment value="weekly">
+        <ion-segment v-model="segmentRef">
           <ion-segment-button value="weekly">
             <ion-label>Weekly</ion-label>
           </ion-segment-button>
@@ -14,18 +14,25 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <chevron-filters :handle-add-date="store.handleAddWeeks" :handle-sub-date="store.handleSubWeeks"
-        :date="groupWeeks(state.filterDate)" />
+      <div v-if="segmentRef === 'weekly'">
 
-      <div class="ion-margin-top barChart">
-        <BarChart :chart-data="state.chartData" :chart-label="state.chartLabel" />
+
+        <chevron-filters :handle-add-date="store.handleAddWeeks" :handle-sub-date="store.handleSubWeeks"
+          :date="groupWeeks(state.filterDate)" />
+
+        <div class="ion-margin-top barChart">
+          <BarChart :chart-data="state.chartData" :chart-label="state.chartLabel" />
+        </div>
+
+        <StaticsCard :min="state.minDuringWeek" :max="state.maxDuringWeek"
+          :wee-measurement="userState.user.weeMeasurement" :avg="state.averageWeeDuringWeek" label="Amount of Wees"
+          :loading="state.fetchingWeeklyWees" />
+
+        <StaticsCard :min="getWeeklyWeeFrequency(state.weesDuringWeek).min"
+          :max="getWeeklyWeeFrequency(state.weesDuringWeek).max"
+          :avg="getWeeklyWeeFrequency(state.weesDuringWeek).average" label="Wee frequency"
+          :loading="state.fetchingWeeklyWees" />
       </div>
-
-      <StaticsCard :min="state.minDuringWeek" :max="state.maxDuringWeek" :wee-measurement="userState.user.weeMeasurement"
-        :avg="state.averageWeeDuringWeek" label="Amount of Wees" />
-
-
-
     </ion-content>
   </ion-page>
 </template>
@@ -39,12 +46,17 @@ import { groupWeeks } from "@/utils/helpers"
 import BarChart from '@/components/shared/BarChart.vue';
 import { useUsersStore } from '@/store/useUsersStore';
 import StaticsCard from '@/components/shared/StaticsCard.vue';
+import { getWeeklyWeeFrequency } from '@/utils/baseUtils';
+import { ref } from 'vue';
 
 const store = useWeeklyStore()
 const { state } = storeToRefs(store)
 
 const userStore = useUsersStore()
 const { state: userState } = storeToRefs(userStore)
+
+const segmentRef = ref<"weekly" | "monthly">('weekly')
+
 </script>
 
 <style scoped>
