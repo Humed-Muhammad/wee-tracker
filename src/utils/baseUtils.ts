@@ -12,7 +12,7 @@ export const extractFileExtension = (fileName: string) => {
 
 export const convertUnits = (
   unit: number | undefined,
-  to: "fl. oz." | "ML"
+  to: "fl. oz." | "ML" | undefined
 ) => {
   if (to === "fl. oz.") {
     return Math.round(Number(unit) * 0.033814);
@@ -55,4 +55,37 @@ export const presentToast = async (
   });
 
   await toast.present();
+};
+
+export const getWeeklyWeeFrequency = (
+  wees: IWeeData[] | DocumentData | undefined
+) => {
+  const countArray: number[] = [];
+  if (wees) {
+    const result = wees?.reduce(
+      (acc: { [key: string]: IWeeData[] }, curr: IWeeData) => {
+        acc[curr?.weeDate] = acc[curr?.weeDate] || [];
+        acc[curr?.weeDate].push(curr);
+        return acc;
+      },
+      {}
+    );
+    if (Object.keys(wees).length) {
+      Object.keys(result)?.map((key) => {
+        countArray.push(result[key].length);
+      });
+    } else {
+      countArray.push(0);
+    }
+  }
+
+  const average = Math.round(mean(countArray)) || 0;
+  const min = Math.min(...countArray) || 0;
+  const max = Math.max(...countArray) || 0;
+
+  return {
+    average,
+    min,
+    max,
+  };
 };
