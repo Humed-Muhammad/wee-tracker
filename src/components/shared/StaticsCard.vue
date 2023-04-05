@@ -1,40 +1,44 @@
 <template>
     <ion-label class="ion-margin cardLabel">{{ props.label }}</ion-label>
 
-    <ion-card class="weeCard container">
+    <ion-card class="weeCard container justify-around">
         <div>
             <ion-card-header>
                 <ion-card-title class="cardTitle">Min</ion-card-title>
             </ion-card-header>
 
-            <ion-card-content class="ion-justify-content ion-align-items-center ion-display-flex ion-flex-direction-column">
-                <ion-text class="weeText">
+            <ion-card-content class="justify-center items-center flex flex-col">
+                <ion-text class="weeText" v-if="!props.loading">
                     {{ convertUnits(props.min, props.weeMeasurement) }} {{ props.weeMeasurement }}
                 </ion-text>
+                <ion-skeleton-text v-else />
             </ion-card-content>
         </div>
+        <vertical-divider />
         <div>
             <ion-card-header>
-
                 <ion-card-title class="cardTitle">Avg</ion-card-title>
             </ion-card-header>
 
-            <ion-card-content class="ion-justify-content ion-align-items-center ion-display-flex ion-flex-direction-column">
-                <ion-text class="weeText">
+            <ion-card-content class="justify-center items-center flex flex-col">
+                <ion-text class="weeText" v-if="!props.loading">
                     {{ convertUnits(props.avg, props.weeMeasurement) }} {{ props.weeMeasurement }}
                 </ion-text>
+                <ion-skeleton-text v-else />
             </ion-card-content>
         </div>
+        <vertical-divider />
         <div>
             <ion-card-header>
 
                 <ion-card-title class="cardTitle">Max</ion-card-title>
             </ion-card-header>
 
-            <ion-card-content class="ion-justify-content ion-align-items-center ion-display-flex ion-flex-direction-column">
-                <ion-text class="weeText">
+            <ion-card-content class="justify-center items-center flex flex-col">
+                <ion-text class="weeText" v-if="!props.loading">
                     {{ convertUnits(props.max, props.weeMeasurement) }} {{ props.weeMeasurement }}
                 </ion-text>
+                <ion-skeleton-text v-else />
             </ion-card-content>
         </div>
     </ion-card>
@@ -42,14 +46,16 @@
 
 <script setup lang="ts" >
 import { convertUnits } from "@/utils/baseUtils";
-import { IonCard, IonCardHeader, IonCardContent } from "@ionic/vue"
+import { IonCard, IonCardHeader, IonCardContent, IonText, IonSkeletonText } from "@ionic/vue"
 import { defineProps } from "vue"
+import VerticalDivider from "./VerticalDivider.vue";
 interface Props {
-    weeMeasurement: "fl. oz." | "ML";
+    weeMeasurement?: "fl. oz." | "ML" | undefined;
     max: number | undefined;
     min: number | undefined;
     avg: number | undefined;
     label: string;
+    loading: boolean
 }
 
 const props = defineProps<Props>()
@@ -69,6 +75,8 @@ const props = defineProps<Props>()
 
 .weeCard {
     flex-grow: 1;
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
 
 .cardLabel {
