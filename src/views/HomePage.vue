@@ -31,18 +31,20 @@
           </div>
         </div>
       </div>
-      <div class="container">
-        <div class="ion-margin-top container chartContainer">
-          <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" />
+      <div class=" w-full">
+        <div class="ion-margin-top container" style="max-width: 100%;">
+          <!-- <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" /> -->
+          <HighChart />
         </div>
       </div>
       <AddWeeData name="Home" />
+      <ion-button @click="exportMultipleChartsToPdf">Export</ion-button>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonIcon, IonSpinner } from '@ionic/vue';
+import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonSpinner } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
 import { getMonthAndDay } from "@/utils/helpers"
 import { convertUnits } from "@/utils/baseUtils"
@@ -51,6 +53,8 @@ import { useUsersStore } from '@/store/useUsersStore';
 import { storeToRefs } from 'pinia';
 import BarChart from '@/components/shared/BarChart.vue';
 import ChevronFilters from '@/components/shared/ChevronFilters.vue';
+import { exportMultipleChartsToPdf } from '@/utils';
+import HighChart from '@/components/shared/HighChart.vue';
 
 
 /**@UserStore */
@@ -101,13 +105,13 @@ const { handleAddDays, handleSubDays } = homeStore
   align-items: center;
 }
 
-.chartContainer {
+.chart-container {
   width: 50%;
   justify-self: center;
 }
 
 @media (max-width: 600px) {
-  .chartContainer {
+  .chart-container {
     width: 100%;
   }
 }
