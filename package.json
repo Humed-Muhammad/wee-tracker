@@ -23,6 +23,7 @@
     "html-to-image": "^1.11.11",
     "ionicons": "^6.0.3",
     "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.28",
     "loadash": "^1.0.0",
     "lodash": "^4.17.21",
     "pinia": "^2.0.33",
