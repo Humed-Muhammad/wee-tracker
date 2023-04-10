@@ -1,8 +1,9 @@
 import { DocumentData } from "firebase/firestore";
+import jsPDF from "jspdf";
 
 export interface IAddWeeData {
   weeMeasurement: string;
-  weeML: undefined;
+  weeML: number | string;
   weeTime: string;
   weeDate: string;
   creatingDoc: boolean;
@@ -66,4 +67,14 @@ export interface IUserState {
   uid: string;
   weeMeasurement: "fl. oz." | "ML";
   profileURL: string;
+}
+
+export interface ICreatePdf {
+  doc?: jsPDF;
+  elements?: HTMLCollectionOf<Element>;
+  title: string;
+  weeData: DocumentData | IWeeData[] | undefined;
+  averageWee: number;
+  chartTitle: string;
+  classSelector: string;
 }
