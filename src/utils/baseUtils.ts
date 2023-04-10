@@ -89,3 +89,19 @@ export const getWeeklyWeeFrequency = (
     max,
   };
 };
+
+export const createTableForPdf = (
+  weeData: DocumentData | IWeeData[] | undefined
+) => {
+  return weeData?.reduce((acc: Array<Array<any>>, curr: IWeeData) => {
+    acc.push([
+      curr.weeDate,
+      curr.weeTime,
+      curr.weeML as string,
+      convertUnits(curr.weeML as number, "fl. oz."),
+      curr.urgency,
+      curr.incontinence,
+    ]);
+    return acc;
+  }, []);
+};
