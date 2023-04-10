@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { ICreatePdf } from "@/types";
+import { convertUnits, createTableForPdf } from "./baseUtils";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_API_KEY,
@@ -19,50 +23,82 @@ export const db = getFirestore(firebaseApp);
 export const provider = new GoogleAuthProvider();
 export const auth = getAuth();
 
-export async function exportMultipleChartsToPdf() {
-  console.log("first");
-  const doc = new jsPDF("p", "px"); // (1)
+/**@Pdf export */
+export async function exportToPdf(args: ICreatePdf) {
+  const doc = new jsPDF("p", "px");
 
-  const elements = document.getElementsByClassName("chart-container"); // (2)
-  console.log(elements);
-  await creatPdf({ doc, elements }); // (3-5)
+  const elements = document.getElementsByClassName(args.classSelector);
 
-  doc.save(`charts.pdf`); // (6)
+  await creatPdf({ ...args, doc, elements });
+
+  doc.save(`export.pdf`);
 }
 
 async function creatPdf({
   doc,
   elements,
-}: {
-  doc: jsPDF;
-  elements: HTMLCollectionOf<Element>;
-}) {
-  let top = 20;
+  title,
+  weeData,
+  averageWee,
+  chartTitle,
+}: ICreatePdf) {
+  let top = 40 * weeData?.length;
   const padding = 10;
 
-  for (let i = 0; i < elements.length; i++) {
-    const el = elements.item(i) as HTMLElement;
+  console.log(weeData);
+
+  const data: Array<Array<string | number>> = createTableForPdf(weeData);
+
+  const head = [
+    [
+      "Date",
+      "Time",
+      "Amount In ML",
+      "Amount In fl. oz.",
+      "Urgency",
+      "Inconsistency",
+    ],
+  ];
+
+  doc?.text(title, 20, 20);
+
+  autoTable(doc, {
+    head: head,
+    body: data.concat([
+      ["", "Average wee", `${averageWee}`, convertUnits(averageWee, "fl. oz.")],
+    ]),
+  });
+
+  for (let i = 0; i < Number(elements?.length); i++) {
+    const el = elements?.item(i) as HTMLElement;
     const imgData = await toPng(el);
 
     let elHeight = el.offsetHeight;
     let elWidth = el.offsetWidth;
 
-    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageWidth = doc?.internal.pageSize.getWidth();
 
-    if (elWidth > pageWidth) {
-      const ratio = pageWidth / elWidth;
+    if (elWidth > pageWidth!) {
+      const ratio = pageWidth! / elWidth;
       elHeight = elHeight * ratio - padding;
       elWidth = elWidth * ratio - padding;
     }
 
-    const pageHeight = doc.internal.pageSize.getHeight();
+    const pageHeight = doc?.internal.pageSize.getHeight();
 
-    if (top + elHeight > pageHeight) {
-      doc.addPage();
+    if (top + elHeight > pageHeight!) {
+      doc?.addPage();
       top = 20;
     }
 
-    doc.addImage(imgData, "PNG", padding, top, elWidth, elHeight, `image${i}`);
+    doc?.setLineHeightFactor(10);
+    doc?.text(chartTitle, 200, top - 30, {
+      align: "center",
+    });
+    doc?.addImage(imgData, "PNG", padding, top, elWidth, elHeight, `image${i}`);
     top += elHeight;
+    doc?.text("Powered By Roy&Co", 200, top + 40, {
+      align: "center",
+    });
   }
 }

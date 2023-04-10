@@ -8,12 +8,14 @@
           </ion-segment-button>
         </ion-segment>
       </ion-toolbar>
+
     </ion-header>
     <ion-content :fullscreen="true">
 
       <ion-card-header class="headerTitle">
         <ion-card-title class="cardTitle">Your Daily Wee</ion-card-title>
         <ion-card-subtitle>During the day</ion-card-subtitle>
+
       </ion-card-header>
 
       <ChevronFilters :handle-add-date="handleAddDays" :handle-sub-date="handleSubDays"
@@ -32,19 +34,25 @@
         </div>
       </div>
       <div class=" w-full">
-        <div class="ion-margin-top container" style="max-width: 100%;">
-          <!-- <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" /> -->
-          <HighChart />
+        <div class="ion-margin-top container " style="max-width: 100%;">
+          <div class="chart-container">
+            <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" />
+          </div>
         </div>
       </div>
       <AddWeeData name="Home" />
-      <ion-button @click="exportMultipleChartsToPdf">Export</ion-button>
+
+      <div class="container ion-margin">
+        <ion-icon class="export-icon" :icon="downloadOutline"></ion-icon>
+        <ion-text class="container" @click="exportYourData">Export
+          Your Data </ion-text>
+      </div>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonSpinner } from '@ionic/vue';
+import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonSpinner, IonIcon } from '@ionic/vue';
 import AddWeeData from '@/components/AddWeeData.vue';
 import { getMonthAndDay } from "@/utils/helpers"
 import { convertUnits } from "@/utils/baseUtils"
@@ -53,8 +61,9 @@ import { useUsersStore } from '@/store/useUsersStore';
 import { storeToRefs } from 'pinia';
 import BarChart from '@/components/shared/BarChart.vue';
 import ChevronFilters from '@/components/shared/ChevronFilters.vue';
-import { exportMultipleChartsToPdf } from '@/utils';
-import HighChart from '@/components/shared/HighChart.vue';
+import { exportToPdf } from '@/utils';
+import { downloadOutline } from 'ionicons/icons';
+import { format } from 'date-fns';
 
 
 /**@UserStore */
@@ -68,6 +77,9 @@ const homeStore = useHomeStore()
 const { state: homeState } = storeToRefs(homeStore)
 const { handleAddDays, handleSubDays } = homeStore
 
+const exportYourData = () => {
+  exportToPdf({ title: 'Daily Wees Data', weeData: homeState.value.weesDuringDay, averageWee: homeState.value.averageWeeDuringDay as number, classSelector: 'chart-container', chartTitle: `Wees During ${format(homeState.value.currentDate, "PPP")}` })
+}
 
 </script>
 
@@ -166,5 +178,10 @@ const { handleAddDays, handleSubDays } = homeStore
 
 .weeIcon {
   color: rgb(235, 180, 3);
+}
+
+.export-icon {
+  font-size: 25px;
+  /* position: absolute; */
 }
 </style>
