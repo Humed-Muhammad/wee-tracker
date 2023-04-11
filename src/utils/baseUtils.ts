@@ -99,8 +99,8 @@ export const createTableForPdf = (
       curr.weeTime,
       curr.weeML as string,
       convertUnits(curr.weeML as number, "fl. oz."),
-      curr.urgency,
-      curr.incontinence,
+      curr.urgency ? "Yes" : "No",
+      curr.incontinence ? "Yes" : "No",
     ]);
     return acc;
   }, []);

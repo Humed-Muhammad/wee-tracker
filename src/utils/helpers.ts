@@ -9,6 +9,7 @@ import {
   query,
   updateDoc,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { auth, db } from ".";
 import { checkbox, warning } from "ionicons/icons";
@@ -28,7 +29,8 @@ export const getWeesByDay = (state: IHomeStoreState) => {
     const dayWeesQuery = query(
       weeRef,
       where("uid", "==", auth.currentUser?.uid),
-      where("weeDate", "==", format(state.currentDate, "PP"))
+      where("weeDate", "==", format(state.currentDate, "PP")),
+      orderBy("weeTime")
     );
 
     onSnapshot(dayWeesQuery, (querySnapshot) => {
