@@ -42,10 +42,8 @@ async function creatPdf({
   averageWee,
   chartTitle,
 }: ICreatePdf) {
-  let top = 40 * weeData?.length;
+  let top = 300;
   const padding = 10;
-
-  console.log(weeData);
 
   const data: Array<Array<string | number>> = createTableForPdf(weeData);
 
@@ -69,36 +67,36 @@ async function creatPdf({
     ]),
   });
 
-  for (let i = 0; i < Number(elements?.length); i++) {
-    const el = elements?.item(i) as HTMLElement;
-    const imgData = await toPng(el);
+  doc?.setLineHeightFactor(10);
+  doc?.text(chartTitle, 200, top - 30, {
+    align: "center",
+  });
 
-    let elHeight = el.offsetHeight;
-    let elWidth = el.offsetWidth;
+  // for (let i = 0; i < Number(elements?.length); i++) {
+  const el = elements?.item(0) as HTMLElement;
+  const imgData = await toPng(el);
 
-    const pageWidth = doc?.internal.pageSize.getWidth();
+  let elHeight = el.offsetHeight;
+  let elWidth = el.offsetWidth;
 
-    if (elWidth > pageWidth!) {
-      const ratio = pageWidth! / elWidth;
-      elHeight = elHeight * ratio - padding;
-      elWidth = elWidth * ratio - padding;
-    }
+  const pageWidth = doc?.internal.pageSize.getWidth();
 
-    const pageHeight = doc?.internal.pageSize.getHeight();
-
-    if (top + elHeight > pageHeight!) {
-      doc?.addPage();
-      top = 20;
-    }
-
-    doc?.setLineHeightFactor(10);
-    doc?.text(chartTitle, 200, top - 30, {
-      align: "center",
-    });
-    doc?.addImage(imgData, "PNG", padding, top, elWidth, elHeight, `image${i}`);
-    top += elHeight;
-    doc?.text("Powered By Roy&Co", 200, top + 40, {
-      align: "center",
-    });
+  if (elWidth > pageWidth!) {
+    const ratio = pageWidth! / elWidth;
+    elHeight = elHeight * ratio - padding;
+    elWidth = elWidth * ratio - padding;
   }
+
+  const pageHeight = doc?.internal.pageSize.getHeight();
+
+  doc?.addImage(imgData, "PNG", padding, top, elWidth, elHeight, `image`);
+
+  if (top + elHeight > pageHeight!) {
+    doc?.addPage();
+    top = 20;
+  }
+  // }
+  doc?.text("Powered By Roy&Co", 200, Number(pageHeight) - 50, {
+    align: "center",
+  });
 }
