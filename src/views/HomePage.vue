@@ -8,14 +8,11 @@
           </ion-segment-button>
         </ion-segment>
       </ion-toolbar>
-
     </ion-header>
     <ion-content :fullscreen="true">
-
       <ion-card-header class="headerTitle">
         <ion-card-title class="cardTitle">Your Daily Wee</ion-card-title>
         <ion-card-subtitle>During the day</ion-card-subtitle>
-
       </ion-card-header>
 
       <ChevronFilters :handle-add-date="handleAddDays" :handle-sub-date="handleSubDays"
@@ -24,63 +21,76 @@
       <div class="container flex-col">
         <ion-text class="averageText">Average</ion-text>
         <div class="container outerCircle">
-
           <div class="dailyAverageCircle container">
             <ion-text v-if="!homeState.fetchingWees" class="md">{{
-              convertUnits(homeState.averageWeeDuringDay, userState.user?.weeMeasurement) }} {{
-    userState.user?.weeMeasurement }}</ion-text>
+              convertUnits(
+                homeState.averageWeeDuringDay,
+                userState.user?.weeMeasurement
+              )
+            }}
+              {{ userState.user?.weeMeasurement }}</ion-text>
             <ion-spinner v-else name="crescent" />
           </div>
         </div>
       </div>
-      <div class=" w-full">
-        <div class="ion-margin-top container " style="max-width: 100%;">
-          <div class="chart-container">
-            <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" />
-          </div>
+      <div class="ion-margin-top container w-full">
+        <div class="chart-container">
+          <BarChart :chart-data="homeState.chartData" :chart-label="homeState.chartLabel" />
         </div>
       </div>
       <AddWeeData name="Home" />
-
-      <div class="container ion-margin">
-        <ion-icon class="export-icon" :icon="downloadOutline"></ion-icon>
-        <ion-text class="container" @click="exportYourData">Export
-          Your Data </ion-text>
-      </div>
+      <ExportData :export-pdf="exportPdf" />
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { IonLabel, IonPage, IonHeader, IonToolbar, IonCardHeader, IonCardTitle, IonCardSubtitle, IonContent, IonSegment, IonSegmentButton, IonText, IonSpinner, IonIcon } from '@ionic/vue';
-import AddWeeData from '@/components/AddWeeData.vue';
-import { getMonthAndDay } from "@/utils/helpers"
-import { convertUnits } from "@/utils/baseUtils"
-import { useHomeStore } from '@/store/useHomeStore';
-import { useUsersStore } from '@/store/useUsersStore';
-import { storeToRefs } from 'pinia';
-import BarChart from '@/components/shared/BarChart.vue';
-import ChevronFilters from '@/components/shared/ChevronFilters.vue';
-import { exportToPdf } from '@/utils';
-import { downloadOutline } from 'ionicons/icons';
-import { format } from 'date-fns';
-
+import {
+  IonLabel,
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonContent,
+  IonSegment,
+  IonSegmentButton,
+  IonText,
+  IonSpinner,
+} from "@ionic/vue";
+import AddWeeData from "@/components/AddWeeData.vue";
+import { getMonthAndDay } from "@/utils/helpers";
+import { convertUnits } from "@/utils/baseUtils";
+import { useHomeStore } from "@/store/useHomeStore";
+import { useUsersStore } from "@/store/useUsersStore";
+import { storeToRefs } from "pinia";
+import BarChart from "@/components/shared/BarChart.vue";
+import ChevronFilters from "@/components/shared/ChevronFilters.vue";
+import { exportToPdf } from "@/utils";
+import { format } from "date-fns";
+import ExportData from "@/components/shared/ExportData.vue";
 
 /**@UserStore */
-const userStore = useUsersStore()
-const { state: userState } = storeToRefs(userStore)
+const userStore = useUsersStore();
+const { state: userState } = storeToRefs(userStore);
 
 /**@FetchUserData */
-userStore.fetchUserData()
+userStore.fetchUserData();
 /**@HomeStore */
-const homeStore = useHomeStore()
-const { state: homeState } = storeToRefs(homeStore)
-const { handleAddDays, handleSubDays } = homeStore
+const homeStore = useHomeStore();
+const { state: homeState } = storeToRefs(homeStore);
+const { handleAddDays, handleSubDays } = homeStore;
 
-const exportYourData = () => {
-  exportToPdf({ title: 'Daily Wees Data', weeData: homeState.value.weesDuringDay, averageWee: homeState.value.averageWeeDuringDay as number, classSelector: 'chart-container', chartTitle: `Wees During ${format(homeState.value.currentDate, "PPP")}` })
-}
-
+const exportPdf = () => {
+  exportToPdf({
+    title: "Daily Wees Data",
+    weeData: homeState.value.weesDuringDay,
+    averageWee: homeState.value.averageWeeDuringDay as number,
+    classSelector: "chart-container",
+    chartTitle: `Wees During ${format(homeState.value.currentDate, "PPP")}`,
+  });
+};
 </script>
 
 <style scoped>
@@ -153,7 +163,6 @@ const exportYourData = () => {
   border-radius: 50%;
   border: 5px solid rgb(27, 131, 216);
   font-weight: 600;
-
 }
 
 .outerCircle {
