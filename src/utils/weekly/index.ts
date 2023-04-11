@@ -1,5 +1,5 @@
 import { IWeeData, IWeeklyStoreState } from "@/types";
-import { endOfWeek, format, startOfWeek } from "date-fns";
+import { endOfWeek, formatISO, startOfWeek } from "date-fns";
 import { DocumentData, onSnapshot } from "firebase/firestore";
 import { warning } from "ionicons/icons";
 import { calculateMinAndMax, presentToast } from "../baseUtils";
@@ -12,8 +12,8 @@ export const getWeesByWeek = (state: IWeeklyStoreState) => {
 
     onSnapshot(
       weeklyQuery({
-        startDate: format(startOfWeek(state.filterDate), "PP"),
-        endDate: format(endOfWeek(state.filterDate), "PP"),
+        startDate: `${formatISO(startOfWeek(state.filterDate))}`,
+        endDate: `${formatISO(endOfWeek(state.filterDate))}`,
       }),
       (querySnapshot) => {
         const result: IWeeData[] | DocumentData = [];
@@ -34,11 +34,14 @@ export const getWeesByWeek = (state: IWeeklyStoreState) => {
         state.maxDuringWeek = minAndMax.max;
 
         state.fetchingWeeklyWees = false;
+      },
+      (error) => {
+        presentToast(error.message, "warning", warning);
       }
     );
     // unsubscribe();
   } catch (error) {
-    presentToast("Error during fetching", "warning", warning);
+    presentToast(error as string, "warning", warning);
     state.fetchingWeeklyWees = false;
   }
 };
