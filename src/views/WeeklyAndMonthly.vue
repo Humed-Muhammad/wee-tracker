@@ -17,9 +17,10 @@
       <div v-if="segmentRef === 'weekly'">
         <chevron-filters :handle-add-date="weeklyStore.handleAddWeeks" :handle-sub-date="weeklyStore.handleSubWeeks"
           :date="groupWeeks(weeklyState.filterDate)" />
-
-        <div class="ion-margin-top barChart weekly-chart-container" style="height: auto;">
-          <BarChart :chart-data="weeklyState.chartData" :chart-label="weeklyState.chartLabel" />
+        <div class="ion-margin-top container w-full">
+          <div class="ion-margin-top barChart weekly-chart-container" style="height: auto;">
+            <BarChart :chart-data="weeklyState.chartData" :chart-label="weeklyState.chartLabel" />
+          </div>
         </div>
         <ExportData :exportCvs="() => convertToCsv(weeklyState.allWees)" :export-pdf="() => exportPdf(weeklyState)" />
 
@@ -33,9 +34,10 @@
       <div v-if="segmentRef === 'monthly'">
         <chevron-filters :handle-add-date="monthlyStore.handleAddMonth" :handle-sub-date="monthlyStore.handleSubMonth"
           :date="getMonthAndYear(monthlyState.filterDate)" />
-
-        <div class="ion-margin-top barChart weekly-chart-container" style="height: auto;">
-          <BarChart :chart-data="monthlyState.chartData" :chart-label="monthlyState.chartLabel" />
+        <div class="ion-margin-top container w-full">
+          <div class="ion-margin-top barChart weekly-chart-container" style="height: auto;">
+            <BarChart :chart-data="monthlyState.chartData" :chart-label="monthlyState.chartLabel" />
+          </div>
         </div>
         <ExportData :exportCvs="() => convertToCsv(monthlyState.allWees)" :export-pdf="() => exportPdf(monthlyState)" />
 
@@ -94,5 +96,18 @@ const exportPdf = (state: IStoreState) => {
 <style scoped>
 .barChart {
   margin-bottom: 20px;
+}
+
+
+
+.weekly-chart-container {
+  width: 50%;
+  justify-self: center;
+}
+
+@media (max-width: 600px) {
+  .weekly-chart-container {
+    width: 100%;
+  }
 }
 </style>
