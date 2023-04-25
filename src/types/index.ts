@@ -9,6 +9,7 @@ export interface IAddWeeData {
   creatingDoc: boolean;
   urgency: boolean;
   incontinence: boolean;
+  weeTimeStamp: string;
 }
 
 export type IWeeData = Omit<IAddWeeData, "creatingDoc">;

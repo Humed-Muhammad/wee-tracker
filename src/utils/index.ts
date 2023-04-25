@@ -6,7 +6,7 @@ import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { ICreatePdf } from "@/types";
-import { convertUnits, createTableForPdf } from "./baseUtils";
+import { convertUnits, createTableForPdf, presentToast } from "./baseUtils";
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_API_KEY,
@@ -30,7 +30,9 @@ export async function exportToPdf(args: ICreatePdf) {
   const elements = document.getElementsByClassName(args.classSelector);
 
   await creatPdf({ ...args, doc, elements });
-
+  if (!args.weeData?.length) {
+    return presentToast("No data to export!", "warning");
+  }
   doc.save(`export.pdf`);
 }
 

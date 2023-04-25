@@ -2,6 +2,7 @@ import { IWeeData } from "@/types";
 
 import { Color } from "@ionic/core";
 import { toastController } from "@ionic/vue";
+import { format, parseISO } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { mean } from "lodash";
 import { useDownload } from "./hooks";
@@ -95,9 +96,13 @@ export const getWeeklyWeeFrequency = (
 export const createTableForPdf = (
   weeData: DocumentData | IWeeData[] | undefined
 ): Array<Array<string>> => {
+  console.log(weeData);
   return weeData?.reduce((acc: Array<Array<any>>, curr: IWeeData) => {
     acc.push([
-      curr.weeDate,
+      `${format(parseISO(curr.weeTimeStamp), "dd")}-${format(
+        parseISO(curr.weeTimeStamp),
+        "MMM"
+      )}-${format(parseISO(curr.weeTimeStamp), "y")}`,
       curr.weeTime,
       curr.weeML as string,
       convertUnits(curr.weeML as number, "fl. oz."),
@@ -121,30 +126,35 @@ export const convertBlobToBase64 = (blob: Blob) =>
 export const convertToCsv = (
   weeData: DocumentData | IWeeData[] | undefined
 ) => {
-  const rows = createTableForPdf(weeData);
-  rows.unshift([
-    "Wee Date",
-    "Wee Time",
-    "Wee Amount (ML)",
-    "Wee Amount (fl. oz.)",
-    "Urgency",
-    "Incontinence",
-  ]);
+  try {
+    const rows = createTableForPdf(weeData);
+    rows.unshift([
+      "Wee Date",
+      "Wee Time",
+      "Wee Amount (ML)",
+      "Wee Amount (fl. oz.)",
+      "Urgency",
+      "Incontinence",
+    ]);
 
-  let csvContent = "";
+    let csvContent = "";
 
-  rows.forEach((row) => {
-    csvContent += row.join(",") + "\n";
-  });
+    rows.forEach((row) => {
+      csvContent += row.join(",") + "\n";
+    });
 
-  console.log(rows);
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8," });
-  const objUrl = URL.createObjectURL(blob);
-  // const csvContent =
-  //   "data:text/csv;charset=utf-8," +
-  //   rows.map((e: string[]) => e.join(",")).join("\n");
-  useDownload({
-    downloadFile: objUrl,
-    name: "export.csv",
-  });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8," });
+    const objUrl = URL.createObjectURL(blob);
+
+    console.log(rows);
+    if (!weeData?.length) {
+      return presentToast("No data to export!", "warning");
+    }
+    useDownload({
+      downloadFile: objUrl,
+      name: "export.csv",
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
