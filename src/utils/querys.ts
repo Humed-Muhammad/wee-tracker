@@ -1,9 +1,9 @@
-import { endAt, orderBy, query, startAt, where } from "firebase/firestore";
-import { auth } from "..";
+import { orderBy, query, where } from "firebase/firestore";
+import { auth } from ".";
 
-import { weeRef } from "../dbRefs";
+import { weeRef } from "./dbRefs";
 
-export const weeklyQuery = (dateRange: {
+export const rangeQuery = (dateRange: {
   startDate: string;
   endDate: string;
 }) => {

@@ -29,8 +29,11 @@
                 </ion-item>
             </ion-list>
             <div id="buttonContainer">
-                <ion-button v-if="!state.creatingDoc" @click="handleSubmit" size="default">Submit</ion-button>
-                <ion-spinner v-else name="crescent">Submitting</ion-spinner>
+                <ion-button class="signInBtn" color="medium" sty v-if="!state.creatingDoc" @click="handleSubmit"
+                    size="default">Submit</ion-button>
+                <ion-button class="signInBtn" color="dark" v-else>
+                    <ion-spinner name="dots" />
+                </ion-button>
             </div>
 
         </ion-content>
@@ -136,8 +139,15 @@ export default defineComponent({
 }
 
 #buttonContainer {
-    widows: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
+}
+
+
+.signInBtn {
+    width: 90%;
+    font-size: 16px;
+    text-align: center;
 }
 </style>

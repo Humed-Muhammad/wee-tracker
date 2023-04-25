@@ -39,8 +39,8 @@ export const useUsersStore = defineStore("users", () => {
   });
   const router = useRouter();
   const signInWithGoogle = (
-    shouldNavigate?: boolean,
-    reAuthenticateUser?: boolean
+    shouldNavigate?: boolean
+    // reAuthenticateUser?: boolean
   ) => {
     state.value.isSigningIn = true;
     signInWithPopup(auth, provider)

@@ -176,3 +176,7 @@ export const groupWeeks = (date: Date) => {
       )} - ${format(getEndOfWeek, "d")} ${format(getEndOfWeek, "LLLL")}`;
   }
 };
+
+export const getMonthAndYear = (date: Date) => {
+  return `${format(date, "MMM")} ${format(date, "Y")}`;
+};

@@ -42,7 +42,7 @@ async function creatPdf({
   averageWee,
   chartTitle,
 }: ICreatePdf) {
-  let top = 300;
+  let top = 250;
   const padding = 10;
 
   const data: Array<Array<string | number>> = createTableForPdf(weeData);

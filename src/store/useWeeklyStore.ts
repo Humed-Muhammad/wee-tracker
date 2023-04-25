@@ -1,4 +1,4 @@
-import { IWeeklyStoreState } from "@/types";
+import { IStoreState } from "@/types";
 import { auth } from "@/utils";
 import { getWeesByWeek } from "@/utils/weekly";
 import { addWeeks, subWeeks } from "date-fns";
@@ -6,15 +6,15 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useWeeklyStore = defineStore("weekly", () => {
-  const state = ref<IWeeklyStoreState>({
+  const state = ref<IStoreState>({
     filterDate: new Date(),
-    averageWeeDuringWeek: undefined,
+    averageWee: undefined,
     chartData: [],
     chartLabel: [],
-    fetchingWeeklyWees: false,
-    maxDuringWeek: undefined,
-    minDuringWeek: undefined,
-    weesDuringWeek: undefined,
+    fetchingWees: false,
+    maxWee: undefined,
+    minWee: undefined,
+    allWees: undefined,
   });
 
   if (auth.currentUser?.uid) {

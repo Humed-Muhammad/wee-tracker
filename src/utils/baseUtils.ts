@@ -1,8 +1,27 @@
 import { IWeeData } from "@/types";
+import { Directory, Filesystem } from "@capacitor/filesystem";
 import { Color } from "@ionic/core";
 import { toastController } from "@ionic/vue";
 import { DocumentData } from "firebase/firestore";
 import { mean } from "lodash";
+import { useDownload } from "./hooks";
+
+interface IWriteFileOptions {
+  path?: string | undefined;
+  data: string;
+  directory?: Directory | undefined;
+}
+export const saveToFileSystem = async ({
+  path,
+  data,
+  directory,
+}: IWriteFileOptions) => {
+  await Filesystem.writeFile({
+    path: path || "export.pdf",
+    data,
+    directory: directory || Directory.Data,
+  });
+};
 
 export const extractFileExtension = (fileName: string) => {
   const result = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -92,7 +111,7 @@ export const getWeeklyWeeFrequency = (
 
 export const createTableForPdf = (
   weeData: DocumentData | IWeeData[] | undefined
-) => {
+): Array<Array<string>> => {
   return weeData?.reduce((acc: Array<Array<any>>, curr: IWeeData) => {
     acc.push([
       curr.weeDate,
@@ -104,4 +123,45 @@ export const createTableForPdf = (
     ]);
     return acc;
   }, []);
+};
+
+export const convertBlobToBase64 = (blob: Blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+  });
+
+export const convertToCsv = (
+  weeData: DocumentData | IWeeData[] | undefined
+) => {
+  const rows = createTableForPdf(weeData);
+  rows.unshift([
+    "Wee Date",
+    "Wee Time",
+    "Wee Amount (ML)",
+    "Wee Amount (fl. oz.)",
+    "Urgency",
+    "Incontinence",
+  ]);
+
+  let csvContent = "";
+
+  rows.forEach((row) => {
+    csvContent += row.join(",") + "\n";
+  });
+
+  console.log(rows);
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8," });
+  const objUrl = URL.createObjectURL(blob);
+  // const csvContent =
+  //   "data:text/csv;charset=utf-8," +
+  //   rows.map((e: string[]) => e.join(",")).join("\n");
+  useDownload({
+    downloadFile: objUrl,
+    name: "export.csv",
+  });
 };

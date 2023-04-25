@@ -39,7 +39,7 @@
         </div>
       </div>
       <AddWeeData name="Home" />
-      <ExportData :export-pdf="exportPdf" />
+      <ExportData :exportCvs="() => convertToCsv(homeState.weesDuringDay)" :export-pdf="exportPdf" />
     </ion-content>
   </ion-page>
 </template>
@@ -61,7 +61,7 @@ import {
 } from "@ionic/vue";
 import AddWeeData from "@/components/AddWeeData.vue";
 import { getMonthAndDay } from "@/utils/helpers";
-import { convertUnits } from "@/utils/baseUtils";
+import { convertToCsv, convertUnits } from "@/utils/baseUtils";
 import { useHomeStore } from "@/store/useHomeStore";
 import { useUsersStore } from "@/store/useUsersStore";
 import { storeToRefs } from "pinia";
@@ -91,6 +91,7 @@ const exportPdf = () => {
     chartTitle: `Wees During ${format(homeState.value.currentDate, "PPP")}`,
   });
 };
+
 </script>
 
 <style scoped>

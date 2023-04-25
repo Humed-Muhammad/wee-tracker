@@ -33,13 +33,13 @@ export interface IHomeStoreState {
   fetchingWees: boolean;
 }
 
-export interface IWeeklyStoreState {
-  weesDuringWeek: IWeeData[] | undefined | DocumentData;
-  averageWeeDuringWeek: number | undefined;
-  minDuringWeek: number | undefined;
-  maxDuringWeek: number | undefined;
+export interface IStoreState {
+  allWees: IWeeData[] | undefined | DocumentData;
+  averageWee: number | undefined;
+  minWee: number | undefined;
+  maxWee: number | undefined;
   filterDate: Date;
-  fetchingWeeklyWees: boolean;
+  fetchingWees: boolean;
   chartLabel: string[];
   chartData: number[];
 }
