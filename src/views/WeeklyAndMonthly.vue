@@ -16,18 +16,19 @@
     <ion-content :fullscreen="true">
       <div v-if="segmentRef === 'weekly'">
         <chevron-filters :handle-add-date="weeklyStore.handleAddWeeks" :handle-sub-date="weeklyStore.handleSubWeeks"
-          :date="groupWeeks(state.filterDate)" />
+          :date="groupWeeks(weeklyState.filterDate)" />
 
         <div class="ion-margin-top barChart weekly-chart-container" style="height: auto;">
-          <BarChart :chart-data="state.chartData" :chart-label="state.chartLabel" />
+          <BarChart :chart-data="weeklyState.chartData" :chart-label="weeklyState.chartLabel" />
         </div>
-        <ExportData :exportCvs="() => convertToCsv(monthlyState.allWees)" :export-pdf="exportPdf" />
+        <ExportData :exportCvs="() => convertToCsv(weeklyState.allWees)" :export-pdf="() => exportPdf(weeklyState)" />
 
-        <StaticsCard :min="state.minWee" :max="state.maxWee" :wee-measurement="userState.user.weeMeasurement"
-          :avg="state.averageWee" label="Amount of Wees" :loading="state.fetchingWees" />
+        <StaticsCard :min="weeklyState.minWee" :max="weeklyState.maxWee" :wee-measurement="userState.user.weeMeasurement"
+          :avg="weeklyState.averageWee" label="Amount of Wees" :loading="weeklyState.fetchingWees" />
 
-        <StaticsCard :min="getWeeklyWeeFrequency(state.allWees).min" :max="getWeeklyWeeFrequency(state.allWees).max"
-          :avg="getWeeklyWeeFrequency(state.allWees).average" label="Wee frequency" :loading="state.fetchingWees" />
+        <StaticsCard :min="getWeeklyWeeFrequency(weeklyState.allWees).min"
+          :max="getWeeklyWeeFrequency(weeklyState.allWees).max" :avg="getWeeklyWeeFrequency(weeklyState.allWees).average"
+          label="Wee frequency" :loading="weeklyState.fetchingWees" />
       </div>
       <div v-if="segmentRef === 'monthly'">
         <chevron-filters :handle-add-date="monthlyStore.handleAddMonth" :handle-sub-date="monthlyStore.handleSubMonth"
@@ -36,7 +37,7 @@
         <div class="ion-margin-top barChart weekly-chart-container" style="height: auto;">
           <BarChart :chart-data="monthlyState.chartData" :chart-label="monthlyState.chartLabel" />
         </div>
-        <ExportData :exportCvs="() => convertToCsv(monthlyState.allWees)" :export-pdf="exportPdf" />
+        <ExportData :exportCvs="() => convertToCsv(monthlyState.allWees)" :export-pdf="() => exportPdf(monthlyState)" />
 
         <StaticsCard :min="monthlyState.minWee" :max="monthlyState.maxWee"
           :wee-measurement="userState.user.weeMeasurement" :avg="monthlyState.averageWee" label="Amount of Wees"
@@ -65,9 +66,10 @@ import { ref } from 'vue';
 import { exportToPdf } from '@/utils';
 import ExportData from '@/components/shared/ExportData.vue';
 import { useMonthlyStore } from '@/store/useMonthlyStore';
+import { IStoreState } from '@/types';
 
 const weeklyStore = useWeeklyStore()
-const { state } = storeToRefs(weeklyStore)
+const { state: weeklyState } = storeToRefs(weeklyStore)
 const monthlyStore = useMonthlyStore()
 const { state: monthlyState } = storeToRefs(monthlyStore)
 
@@ -76,14 +78,14 @@ const { state: userState } = storeToRefs(userStore)
 
 const segmentRef = ref<"weekly" | "monthly">('weekly')
 
-const exportPdf = () => {
+const exportPdf = (state: IStoreState) => {
   monthlyStore
   exportToPdf({
     title: "Weekly Wees Data",
-    weeData: state.value.allWees,
-    averageWee: state.value.averageWee as number,
+    weeData: state.allWees,
+    averageWee: state.averageWee as number,
     classSelector: "weekly-chart-container",
-    chartTitle: `Wees between ${groupWeeks(state.value.filterDate)}`,
+    chartTitle: `Wees between ${groupWeeks(state.filterDate)}`,
   });
 };
 
@@ -92,4 +94,5 @@ const exportPdf = () => {
 <style scoped>
 .barChart {
   margin-bottom: 20px;
-}</style>
+}
+</style>
