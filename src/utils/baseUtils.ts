@@ -1,27 +1,10 @@
 import { IWeeData } from "@/types";
-import { Directory, Filesystem } from "@capacitor/filesystem";
+
 import { Color } from "@ionic/core";
 import { toastController } from "@ionic/vue";
 import { DocumentData } from "firebase/firestore";
 import { mean } from "lodash";
 import { useDownload } from "./hooks";
-
-interface IWriteFileOptions {
-  path?: string | undefined;
-  data: string;
-  directory?: Directory | undefined;
-}
-export const saveToFileSystem = async ({
-  path,
-  data,
-  directory,
-}: IWriteFileOptions) => {
-  await Filesystem.writeFile({
-    path: path || "export.pdf",
-    data,
-    directory: directory || Directory.Data,
-  });
-};
 
 export const extractFileExtension = (fileName: string) => {
   const result = fileName.substring(fileName.lastIndexOf(".") + 1);
