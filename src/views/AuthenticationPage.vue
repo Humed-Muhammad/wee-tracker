@@ -36,7 +36,7 @@ const { signInWithGoogle, } = store
 
         <ion-content :fullscreen="true" class="ion-justify-content ion-align-items-center ion-display-flex" color="red">
             <div class="container">
-                <ion-card>
+                <ion-card class="signInCard">
                     <ion-card-header>
                         <ion-card-subtitle>Welcome to Wee Tracker!</ion-card-subtitle>
                         <ion-card-title> Sign In </ion-card-title>
@@ -66,5 +66,15 @@ const { signInWithGoogle, } = store
     justify-content: center;
     align-items: center;
     height: 100%;
+}
+
+.signInCard {
+    width: 50%;
+}
+
+@media (max-width: 600px) {
+    .signInCard {
+        width: 100%;
+    }
 }
 </style>

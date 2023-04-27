@@ -8,7 +8,7 @@
     <ion-content :fullscreen="true">
       <ion-icon v-if="!state.fetchingUserData" @click="chooseFile" class="camera" :icon="camera"></ion-icon>
       <input @change="store.getProfilePhotoFile" style="display: none;" type="file" ref="input" accept="image/*" />
-      <ion-card>
+      <ion-card class="container flex-col">
         <div class="profileImageContainer" style="position: relative;" v-if="!state.fetchingUserData">
           <img style="width: 100%; object-fit: cover;" alt="user profile"
             :src="state.user.profileURL || auth.currentUser?.photoURL" />
@@ -20,7 +20,7 @@
           }}</ion-card-subtitle>
         </ion-card-header>
 
-        <ion-card-content class="">
+        <ion-card-content class="w-full">
           <ion-item>
             <ion-label position="stacked">Your Wee Measurement</ion-label>
             <ion-select interface="popover" name="weeMeasurement" v-model="state.user.weeMeasurement"
@@ -113,13 +113,19 @@ const chooseFile = () => {
   cursor: pointer;
   position: absolute;
   z-index: 9999;
-  left: 16px;
-  top: 68px;
+  left: 10px;
+  top: 65px;
 }
 
 .profileImageContainer {
-  width: 100%;
+  width: 50%;
   height: auto;
+}
+
+@media (max-width: 600px) {
+  .profileImageContainer {
+    width: 100%
+  }
 }
 
 .changePasswordText {
