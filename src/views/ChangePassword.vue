@@ -45,7 +45,7 @@ const { state } = storeToRefs(store)
 // TODO(you): prompt the user to re-provide their sign-in credentials
 
 const reAuthenticate = () => {
-    store.signInWithGoogle(false, true)
+    store.signInWithGoogle(false)
 }
 
 
