@@ -31,5 +31,8 @@ export const useHomeStore = defineStore("home", () => {
       getWeesByDay(state.value);
     }
   };
-  return { handleAddDays, handleSubDays, state };
+  const handleDateChange = (date: Date) => {
+    state.value.currentDate = date;
+  };
+  return { handleAddDays, handleSubDays, state, handleDateChange };
 });
