@@ -93,16 +93,20 @@ export const getWeeklyWeeFrequency = (
   };
 };
 
+export const formatISODate = (date: string) => {
+  return `${format(parseISO(date), "y")}-${format(
+    parseISO(date),
+    "MM"
+  )}-${format(parseISO(date), "dd")}`;
+};
+
 export const createTableForPdf = (
   weeData: DocumentData | IWeeData[] | undefined
 ): Array<Array<string>> => {
   console.log(weeData);
   return weeData?.reduce((acc: Array<Array<any>>, curr: IWeeData) => {
     acc.push([
-      `${format(parseISO(curr.weeTimeStamp), "dd")}-${format(
-        parseISO(curr.weeTimeStamp),
-        "MMM"
-      )}-${format(parseISO(curr.weeTimeStamp), "y")}`,
+      formatISODate(curr.weeTimeStamp),
       curr.weeTime,
       curr.weeML as string,
       convertUnits(curr.weeML as number, "fl. oz."),
@@ -146,7 +150,6 @@ export const convertToCsv = (
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8," });
     const objUrl = URL.createObjectURL(blob);
 
-    console.log(rows);
     if (!weeData?.length) {
       return presentToast("No data to export!", "warning");
     }

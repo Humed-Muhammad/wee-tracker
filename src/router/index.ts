@@ -56,6 +56,11 @@ const routes: Array<RouteRecordRaw> = [
       },
       {
         path: "tab3",
+        component: () => import("@/views/WeeCalendar.vue"),
+        beforeEnter: guard,
+      },
+      {
+        path: "tab4",
         component: () => import("@/views/UserSettings.vue"),
         beforeEnter: guard,
       },
