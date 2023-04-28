@@ -24,8 +24,14 @@ import "@ionic/vue/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 import { createPinia } from "pinia";
+import VCalendar from "v-calendar";
+import "v-calendar/style.css";
 
-const app = createApp(App).use(createPinia()).use(IonicVue).use(router);
+const app = createApp(App)
+  .use(createPinia())
+  .use(IonicVue)
+  .use(router)
+  .use(VCalendar, {});
 
 router.isReady().then(() => {
   app.mount("#app");

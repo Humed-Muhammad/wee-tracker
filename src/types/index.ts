@@ -45,6 +45,13 @@ export interface IStoreState {
   chartData: number[];
 }
 
+export interface ICalenderState extends IStoreState {
+  currentDate: Date;
+  daysInMonth: number[];
+  monthAndYear: string;
+  calenderWees: ICalenderWee[] | undefined;
+}
+
 export interface IUserStoreState {
   isReAuthenticationSuccess: boolean;
   isSigningIn: boolean;
@@ -78,4 +85,12 @@ export interface ICreatePdf {
   averageWee: number;
   chartTitle: string;
   classSelector: string;
+}
+
+export interface ICalenderWee {
+  date: string;
+  backgroundColor: string;
+  textColor: string;
+  day: number;
+  weeMl: number;
 }

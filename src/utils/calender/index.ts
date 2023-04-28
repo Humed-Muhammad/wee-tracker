@@ -1,4 +1,4 @@
-import { IWeeData, IStoreState, ICalenderWee } from "@/types";
+import { IWeeData, ICalenderWee, ICalenderState } from "@/types";
 import { endOfMonth, formatISO, startOfMonth } from "date-fns";
 import { DocumentData, onSnapshot } from "firebase/firestore";
 import { warning } from "ionicons/icons";
@@ -6,14 +6,14 @@ import { calculateMinAndMax, presentToast } from "../baseUtils";
 import { calculateWeeAverage } from "../baseUtils";
 import { rangeQuery } from "../querys";
 
-export const getWeesByMonth = (state: IStoreState) => {
+export const getWeesByMonth = (state: ICalenderState) => {
   try {
     state.fetchingWees = true;
 
     onSnapshot(
       rangeQuery({
-        startDate: `${formatISO(startOfMonth(state.filterDate))}`,
-        endDate: `${formatISO(endOfMonth(state.filterDate))}`,
+        startDate: `${formatISO(startOfMonth(state.currentDate))}`,
+        endDate: `${formatISO(endOfMonth(state.currentDate))}`,
       }),
       (querySnapshot) => {
         const result: IWeeData[] | DocumentData = [];
@@ -25,14 +25,13 @@ export const getWeesByMonth = (state: IStoreState) => {
         state.chartLabel = result.map((data: IWeeData) => data.weeDate);
 
         state.allWees = result;
-
         state.averageWee = calculateWeeAverage(result);
 
         const minAndMax = calculateMinAndMax(result);
 
         state.minWee = minAndMax.min;
         state.maxWee = minAndMax.max;
-
+        state.calenderWees = generateCalendarWeeData(result);
         state.fetchingWees = false;
       },
       (error) => {

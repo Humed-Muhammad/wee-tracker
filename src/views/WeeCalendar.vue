@@ -12,17 +12,21 @@
         </ion-header>
         <ion-content :fullscreen="true">
 
-            <div class="container">
-
-                <ion-datetime @ionChange="handleDateSelect" class="w-full ion-margin-top" presentation="date"
-                    :highlighted-dates="generateCalendarWeeData(monthlyState.allWees)"></ion-datetime>
+            <div class="container flex-col">
+                <div class="ion-margin">
+                    <StaticsCard :min="calenderState.minWee" :max="calenderState.maxWee"
+                        :wee-measurement="userState.user.weeMeasurement" :avg="calenderState.averageWee"
+                        label="Amount of Wees" :loading="calenderState.fetchingWees" />
+                </div>
+                <VCalendar @did-move="calenderStore.handleMove" @dayclick="handleDateSelect" style="width: 100%;"
+                    :attributes="calenderState.calenderWees" />
             </div>
         </ion-content>
     </ion-page>
 </template>
 
 <script setup lang="ts">
-import { generateCalendarWeeData } from "@/utils/monthly";
+
 import {
     IonLabel,
     IonPage,
@@ -31,38 +35,31 @@ import {
     IonContent,
     IonSegment,
     IonSegmentButton,
-    IonDatetime
 } from "@ionic/vue";
-import { useMonthlyStore } from "@/store/useMonthlyStore";
+import { useCalenderStore } from "@/store/useCalenderStore";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useHomeStore } from "@/store/useHomeStore";
-import { formatISO } from "date-fns";
 import { getWeesByDay } from "@/utils/helpers";
+import StaticsCard from "@/components/shared/StaticsCard.vue";
+import { useUsersStore } from "@/store/useUsersStore";
 
-const store = useMonthlyStore()
+
+const calenderStore = useCalenderStore()
 const homeStore = useHomeStore()
+const userStore = useUsersStore()
 
-const { state: monthlyState } = storeToRefs(store)
+const { state: calenderState } = storeToRefs(calenderStore)
 const { state: homeState } = storeToRefs(homeStore)
+const { state: userState } = storeToRefs(userStore)
 const router = useRouter()
 
 
-const handleDateSelect = (value: { detail: { value: string } }) => {
-    console.log(value)
-    const date = (formatISO(new Date(value.detail.value)))
-    homeStore.handleDateChange(new Date(date))
+const handleDateSelect = (value: any) => {
+    homeStore.handleDateChange(new Date(value?.date))
     getWeesByDay(homeState.value);
     router.push('/tab1')
 }
 
-
-
 </script>
 
-
-<style scoped>
-.calendar-next-prev {
-    --display: none;
-}
-</style>
