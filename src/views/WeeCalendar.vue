@@ -13,7 +13,7 @@
         <ion-content :fullscreen="true">
 
             <div class="container flex-col">
-                <div class="ion-margin">
+                <div class="ion-margin w-full">
                     <StaticsCard :min="calenderState.minWee" :max="calenderState.maxWee"
                         :wee-measurement="userState.user.weeMeasurement" :avg="calenderState.averageWee"
                         label="Amount of Wees" :loading="calenderState.fetchingWees" />
