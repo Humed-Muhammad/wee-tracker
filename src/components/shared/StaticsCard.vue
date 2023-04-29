@@ -46,7 +46,7 @@
 
 <script setup lang="ts" >
 import { convertUnits } from "@/utils/baseUtils";
-import { IonCard, IonCardHeader, IonCardContent, IonText, IonSkeletonText } from "@ionic/vue"
+import { IonCard, IonCardHeader, IonCardContent, IonText, IonSkeletonText, IonLabel, IonCardTitle } from "@ionic/vue"
 
 import VerticalDivider from "./VerticalDivider.vue";
 interface Props {

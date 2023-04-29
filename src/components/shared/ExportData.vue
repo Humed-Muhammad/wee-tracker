@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { documentTextOutline, receiptOutline } from 'ionicons/icons';
-import { IonIcon, IonText, IonPopover, IonButton, IonList } from '@ionic/vue';
+import { IonIcon, IonText, IonPopover, IonButton, IonList, IonItem } from '@ionic/vue';
 import { ref } from 'vue';
 
 interface Props {

@@ -10,8 +10,6 @@
                         <ion-label position="stacked">Wee amount (ML)</ion-label>
                         <ion-input name="weeML" clearInput v-model="state.weeML" type="number"
                             placeholder="Add your wee here" required></ion-input>
-
-
                     </ion-item>
                 </div>
                 <ion-item class="ion-margin-top">
